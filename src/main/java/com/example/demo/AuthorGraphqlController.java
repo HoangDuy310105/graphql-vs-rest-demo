@@ -19,4 +19,9 @@ public class AuthorGraphqlController {
     public List<Post> posts(Author author) {
         return DataStore.getPostsByAuthorId(author.getId());
     }
+
+    @org.springframework.graphql.data.method.annotation.MutationMapping
+    public Post createPost(@Argument String title, @Argument String content, @Argument String authorId) {
+        return DataStore.addPost(title, content, authorId);
+    }
 }
