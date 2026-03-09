@@ -16,3 +16,7 @@ type Post {
     title: String!
     content: String
 }
+
+type Mutation {
+    createPost(title: String!, content: String, authorId: ID!): Post
+}

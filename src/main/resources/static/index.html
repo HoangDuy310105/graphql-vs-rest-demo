@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GraphQL vs REST Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-bottom: 1px solid #334155;
+      padding: 24px 40px;
+      text-align: center;
+    }
+
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
+    header h1 span.rest { color: #38bdf8; }
+    header h1 span.vs   { color: #94a3b8; margin: 0 12px; }
+    header h1 span.gql  { color: #e879f9; }
+    header p { color: #64748b; margin-top: 6px; font-size: 0.95rem; }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 32px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      background: #1e293b;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 20px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-header.rest-header { background: #0c4a6e; border-bottom: 2px solid #38bdf8; color: #38bdf8; }
+    .panel-header.gql-header  { background: #4a044e; border-bottom: 2px solid #e879f9; color: #e879f9; }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+    .badge-rest { background: #38bdf8; color: #0c4a6e; }
+    .badge-gql  { background: #e879f9; color: #4a044e; }
+
+    .panel-body { padding: 20px; }
+
+    .section { margin-bottom: 24px; }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 4px; }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    .gql-panel input[type="text"]:focus, .gql-panel textarea:focus {
+      border-color: #e879f9;
+    }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
+    button {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button:active { transform: scale(0.97); }
+    button:hover  { opacity: 0.85; }
+
+    .btn-rest    { background: #38bdf8; color: #0c4a6e; }
+    .btn-danger  { background: #f43f5e; color: #fff; }
+    .btn-gql     { background: #e879f9; color: #4a044e; }
+    .btn-neutral { background: #334155; color: #e2e8f0; }
+
+    .response-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.82rem;
+      min-height: 80px;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #a3e635;
+      margin-top: 10px;
+    }
+
+    .response-box.error { color: #f87171; }
+    .response-box.empty { color: #475569; font-style: italic; }
+
+    .response-label {
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 12px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .tag {
+      background: #1e3a5f;
+      color: #7dd3fc;
+      border: 1px solid #2563eb44;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tag:hover { background: #2563eb55; }
+    .tag.gql-tag { background: #3b0764; color: #f0abfc; border-color: #a855f744; }
+    .tag.gql-tag:hover { background: #a855f733; }
+
+    .info-box {
+      background: #1e3a5f22;
+      border-left: 3px solid #38bdf8;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #7dd3fc;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .info-box.gql { border-color: #e879f9; background: #4a044e22; color: #f0abfc; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #334155;
+      margin: 20px 0;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span class="rest">REST API</span>
+    <span class="vs">vs</span>
+    <span class="gql">GraphQL</span>
+  </h1>
+  <p>Demo so sánh hai phong cách thiết kế API — Spring Boot 4.0</p>
+</header>
+
+<div class="container">
+
+  <!-- ===== REST PANEL ===== -->
+  <div class="panel">
+    <div class="panel-header rest-header">
+      <span class="badge badge-rest">REST</span>
+      REST API — <code>/api/authors</code>
+    </div>
+    <div class="panel-body">
+
+      <div class="info-box">
+        REST yêu cầu nhiều endpoint khác nhau. Mỗi lần gọi trả về toàn bộ dữ liệu của resource (có thể gây <strong>over-fetching</strong> hoặc <strong>under-fetching</strong>).
+      </div>
+
+      <!-- GET Author -->
+      <div class="section">
+        <div class="section-title">GET — Lấy thông tin tác giả</div>
+        <label>Author ID</label>
+        <input type="text" id="rest-author-id" value="1" />
+        <div class="tag-row">
+          <span class="tag" onclick="setVal('rest-author-id','1')">ID: 1</span>
+          <span class="tag" onclick="setVal('rest-author-id','2')">ID: 2</span>
+          <span class="tag" onclick="setVal('rest-author-id','99')">ID: 99 (null)</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-rest" onclick="restGetAuthor()">GET /api/authors/{id}</button>
+        </div>
+        <div class="response-label">Response</div>
+        <div class="response-box empty" id="res-get-author">Chưa gửi request...</div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- GET Posts -->
+      <div class="section">
+        <div class="section-title">GET — Lấy bài viết của tác giả</div>
+        <label>Author ID</label>
+        <input type="text" id="rest-posts-id" value="1" />
+        <div class="tag-row">
+          <span class="tag" onclick="setVal('rest-posts-id','1')">ID: 1</span>
+          <span class="tag" onclick="setVal('rest-posts-id','2')">ID: 2</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-rest" onclick="restGetPosts()">GET /api/authors/{id}/posts</button>
+        </div>
+        <div class="response-label">Response</div>
+        <div class="response-box empty" id="res-get-posts">Chưa gửi request...</div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- POST new post -->
+      <div class="section">
+        <div class="section-title">POST — Tạo bài viết mới</div>
+        <label>Author ID</label>
+        <input type="text" id="rest-new-author-id" value="1" style="margin-bottom:8px"/>
+        <label>Title</label>
+        <input type="text" id="rest-new-title" value="Bài viết mới" style="margin-bottom:8px"/>
+        <label>Content</label>
+        <input type="text" id="rest-new-content" value="Nội dung bài viết" />
+        <div class="btn-row">
+          <button class="btn-danger" onclick="restCreatePost()">POST /api/authors/{id}/posts</button>
+        </div>
+        <div class="response-label">Response</div>
+        <div class="response-box empty" id="res-create-post">Chưa gửi request...</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== GRAPHQL PANEL ===== -->
+  <div class="panel gql-panel">
+    <div class="panel-header gql-header">
+      <span class="badge badge-gql">GraphQL</span>
+      GraphQL API — <code>/graphql</code>
+    </div>
+    <div class="panel-body">
+
+      <div class="info-box gql">
+        GraphQL dùng <strong>một endpoint duy nhất</strong>. Client chỉ lấy đúng các field mình cần — không hơn, không kém. Không cần gọi nhiều lần.
+      </div>
+
+      <!-- Query builder -->
+      <div class="section">
+        <div class="section-title">Chọn query mẫu</div>
+        <div class="tag-row">
+          <span class="tag gql-tag" onclick="setQuery('onlyName')">Chỉ lấy tên</span>
+          <span class="tag gql-tag" onclick="setQuery('withPosts')">Tác giả + bài viết</span>
+          <span class="tag gql-tag" onclick="setQuery('minimalPost')">Chỉ title bài viết</span>
+          <span class="tag gql-tag" onclick="setQuery('full')">Toàn bộ fields</span>
+          <span class="tag gql-tag" onclick="setQuery('createPost')">Mutation: tạo bài viết</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Author ID</label>
+        <input type="text" id="gql-author-id" value="1" style="margin-bottom:10px"/>
+        <label>Query / Mutation</label>
+        <textarea id="gql-query" rows="10">query {
+  author(id: "1") {
+    name
+    posts {
+      title
+    }
+  }
+}</textarea>
+        <div class="btn-row">
+          <button class="btn-gql" onclick="runGraphQL()">Gửi GraphQL Request</button>
+          <button class="btn-neutral" onclick="openGraphiQL()">Mở GraphiQL ↗</button>
+        </div>
+        <div class="response-label">Response</div>
+        <div class="response-box empty" id="res-gql">Chưa gửi request...</div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- So sánh -->
+      <div class="section">
+        <div class="section-title">Demo: Over-fetching vs GraphQL</div>
+        <p style="font-size:0.83rem;color:#94a3b8;line-height:1.6;margin-bottom:12px">
+          Nhấn từng nút để thấy sự khác biệt khi client chỉ cần <strong>tên tác giả</strong>.
+        </p>
+        <div class="btn-row">
+          <button class="btn-rest" onclick="demoOverFetching()">REST (over-fetching)</button>
+          <button class="btn-gql" onclick="demoGraphQLPrecise()">GraphQL (chính xác)</button>
+        </div>
+        <div class="response-label">Response</div>
+        <div class="response-box empty" id="res-compare">Nhấn một trong hai nút...</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const QUERIES = {
+    onlyName: (id) => `query {\n  author(id: "${id}") {\n    name\n  }\n}`,
+    withPosts: (id) => `query {\n  author(id: "${id}") {\n    name\n    email\n    posts {\n      title\n      content\n    }\n  }\n}`,
+    minimalPost: (id) => `query {\n  author(id: "${id}") {\n    posts {\n      title\n    }\n  }\n}`,
+    full: (id) => `query {\n  author(id: "${id}") {\n    id\n    name\n    age\n    phone\n    email\n    posts {\n      id\n      title\n      content\n    }\n  }\n}`,
+    createPost: (id) => `mutation {\n  createPost(authorId: "${id}", title: "Bài viết từ GraphQL", content: "Nội dung bài viết") {\n    id\n    title\n  }\n}`,
+  };
+
+  function setVal(id, val) {
+    document.getElementById(id).value = val;
+  }
+
+  function setQuery(key) {
+    const id = document.getElementById('gql-author-id').value || '1';
+    document.getElementById('gql-query').value = QUERIES[key](id);
+  }
+
+  function showResponse(elId, data, isError = false) {
+    const el = document.getElementById(elId);
+    el.classList.remove('empty', 'error');
+    if (isError) el.classList.add('error');
+    el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+  }
+
+  // ===== REST =====
+  async function restGetAuthor() {
+    const id = document.getElementById('rest-author-id').value.trim();
+    try {
+      const r = await fetch(`/api/authors/${encodeURIComponent(id)}`);
+      const data = await r.json();
+      showResponse('res-get-author', data, !r.ok);
+    } catch(e) { showResponse('res-get-author', 'Lỗi kết nối: ' + e.message, true); }
+  }
+
+  async function restGetPosts() {
+    const id = document.getElementById('rest-posts-id').value.trim();
+    try {
+      const r = await fetch(`/api/authors/${encodeURIComponent(id)}/posts`);
+      const data = await r.json();
+      showResponse('res-get-posts', data, !r.ok);
+    } catch(e) { showResponse('res-get-posts', 'Lỗi kết nối: ' + e.message, true); }
+  }
+
+  async function restCreatePost() {
+    const id      = document.getElementById('rest-new-author-id').value.trim();
+    const title   = document.getElementById('rest-new-title').value.trim();
+    const content = document.getElementById('rest-new-content').value.trim();
+    try {
+      const r = await fetch(`/api/authors/${encodeURIComponent(id)}/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      const data = await r.json();
+      showResponse('res-create-post', data, !r.ok);
+    } catch(e) { showResponse('res-create-post', 'Lỗi kết nối: ' + e.message, true); }
+  }
+
+  // ===== GraphQL =====
+  async function graphqlRequest(query, elId) {
+    try {
+      const r = await fetch('/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      const data = await r.json();
+      const hasError = data.errors && data.errors.length > 0;
+      showResponse(elId, data, hasError);
+    } catch(e) { showResponse(elId, 'Lỗi kết nối: ' + e.message, true); }
+  }
+
+  function runGraphQL() {
+    const query = document.getElementById('gql-query').value;
+    graphqlRequest(query, 'res-gql');
+  }
+
+  function openGraphiQL() {
+    window.open('/graphiql', '_blank');
+  }
+
+  // ===== Demo so sánh =====
+  async function demoOverFetching() {
+    const id = '1';
+    try {
+      const r = await fetch(`/api/authors/${id}`);
+      const data = await r.json();
+      const note = `// REST trả về TOÀN BỘ dữ liệu dù client chỉ cần "name"\n// Đây là Over-fetching!\n\n`;
+      showResponse('res-compare', note + JSON.stringify(data, null, 2));
+    } catch(e) { showResponse('res-compare', 'Lỗi: ' + e.message, true); }
+  }
+
+  async function demoGraphQLPrecise() {
+    const query = `query { author(id: "1") { name } }`;
+    try {
+      const r = await fetch('/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      const data = await r.json();
+      const note = `// GraphQL chỉ trả về đúng field "name" mà client yêu cầu\n// Không có dữ liệu thừa!\n\n`;
+      showResponse('res-compare', note + JSON.stringify(data, null, 2));
+    } catch(e) { showResponse('res-compare', 'Lỗi: ' + e.message, true); }
+  }
+
+  // Sync author ID vào query khi thay đổi
+  document.getElementById('gql-author-id').addEventListener('input', function() {
+    const current = document.getElementById('gql-query').value;
+    const newId = this.value;
+    document.getElementById('gql-query').value = current.replace(/"[^"]*"/g, `"${newId}"`);
+  });
+</script>
+
+</body>
+</html>
