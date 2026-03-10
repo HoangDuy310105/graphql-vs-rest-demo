@@ -1,0 +1,219 @@
+﻿commit 0db2c30a83d6d34fc6735f904c941c3f9c47423f
+Author: HoangDuy310105 <nguyenhoangduy310804@gmail.com>
+Date:   Mon Mar 9 23:01:19 2026 +0700
+
+    Add new feature: createPost mutation
+
+diff --git a/README.md b/README.md
+index 7d6614f..1e30f61 100644
+--- a/README.md
++++ b/README.md
+@@ -90,81 +90,27 @@ query {
+ > 
+ > Nhß╗¥ t├¡nh linh hoß║ít n├áy, Client (ng╞░ß╗¥i l├ám UI App) ─æ╞░ß╗úc to├án quyß╗ün kiß╗âm so├ít dß╗» liß╗çu m├¼nh muß╗æn m├á kh├┤ng cß║ºn nhß╗¥ Backend tß║ío th├¬m API mß╗¢i. GraphQL ─æß║╖c biß╗çt ph├╣ hß╗úp cho c├íc hß╗ç thß╗æng phß╗⌐c tß║íp, ─æa nß╗ün tß║úng. Em xin kß║┐t th├║c b├ái Demo ß║í!"*
+ 
++---
+ 
++### Giai ─æoß║ín 5: (T├╣y Chß╗ìn) Demo t├¡nh n─âng "Th├¬m mß╗¢i" (Mutation)
++*Nß║┐u Gi├ío vi├¬n hß╗Åi: "Thß║┐ b├óy giß╗¥ muß╗æn Th├¬m dß╗» liß╗çu (Tß║ío b├ái viß║┐t mß╗¢i) th├¼ GraphQL c├│ l├ám ─æ╞░ß╗úc kh├┤ng, hay chß╗ë biß║┐t lß║Ñy dß╗» liß╗çu (query)?"*
+ 
++Anh c├│ thß╗â tß╗▒ tin biß╗âu diß╗àn lu├┤n:
+ 
+-Bß║óN Kß║╛ HOß║áCH & Kß╗èCH Bß║óN DEMO THUYß║╛T TR├îNH (GraphQL vs REST API)
+-M├┤n hß╗ìc: [─Éiß╗ün t├¬n m├┤n hß╗ìc] ─Éß╗ü t├ái: So s├ính kiß║┐n tr├║c GraphQL v├á REST API Vai tr├▓ Demo: Tr├¼nh diß╗àn c├ích giß║úi quyß║┐t vß║Ñn ─æß╗ü cß╗ºa REST bß║▒ng GraphQL. Thß╗¥i gian Demo dß╗▒ kiß║┐n: 5 Ph├║t.
+-
+-1. Mß╗ñC ─É├ìCH Cß╗ªA B├ÇI DEMO
+-B├ái Demo n├áy kh├┤ng nhß║▒m mß╗Ñc ─æ├¡ch h╞░ß╗¢ng dß║½n code, m├á ─æß╗â chß╗⌐ng minh bß║▒ng mß║»t thß║¡t cho Giß║úng vi├¬n thß║Ñy 2 khuyß║┐t ─æiß╗âm lß╗¢n nhß║Ñt cß╗ºa REST API truyß╗ün thß╗æng v├á c├ích GraphQL giß║úi quyß║┐t n├│ mß╗Öt c├ích thanh lß╗ïch nh╞░ thß║┐ n├áo.
+-
+-Hai vß║Ñn ─æß╗ü cß╗æt l├╡i cß║ºn l├ám r├╡:
+-
+-Over-fetching (Thß╗½a dß╗» liß╗çu): REST trß║ú vß╗ü qu├í nhiß╗üu dß╗» liß╗çu kh├┤ng cß║ºn thiß║┐t tr├¬n 1 m├án h├¼nh cß╗Ñ thß╗â, g├óy l├úng ph├¡ b─âng th├┤ng mß║íng (─æß║╖c biß╗çt l├á 3G/4G tr├¬n Mobile).
+-Under-fetching (Thiß║┐u dß╗» liß╗çu): REST bß║»t ß╗⌐ng dß╗Ñng phß║úi gß╗ìi nhiß╗üu API li├¬n tiß║┐p mß╗¢i gom ─æß╗º dß╗» liß╗çu hiß╗ân thß╗ï cho 1 giao diß╗çn, g├óy chß║¡m trß╗à (t─âng ─æß╗Ö trß╗à HTTP Request).
+-2. Bß╗ÉI Cß║óNH (B├ÇI TO├üN ─Éß║╢T RA)
+-Giß║ú ─æß╗ïnh ch├║ng ta ─æang ph├ít triß╗ân mß╗Öt ß╗¿ng dß╗Ñng Mobile ─æß╗ìc Blog.
+-
+-Y├¬u cß║ºu t├¡nh n─âng: ß╗₧ M├án h├¼nh ch├¡nh cß╗ºa App, ch├║ng ta chß╗ë cß║ºn hiß╗ân thß╗ï [T├¬n cß╗ºa T├íc giß║ú] v├á [Ti├¬u ─æß╗ü c├íc b├ái viß║┐t cß╗ºa hß╗ì].
+-─Éiß╗üu kiß╗çn: Kh├┤ng hiß╗ân thß╗ï Email, Sß╗æ ─æiß╗çn thoß║íi hay Nß╗Öi dung chi tiß║┐t b├ái viß║┐t ─æß╗â tiß║┐t kiß╗çm pin v├á dung l╞░ß╗úng mß║íng.
+-3. C├üCH CHß║áY SOURCE CODE Tß║áI NH├Ç (CHUß║¿N Bß╗è TR╞»ß╗ÜC)
+-Dß╗▒ ├ín ─æ├ú ─æ╞░ß╗úc code bß║▒ng Spring Boot (Java).
+-
+-B╞░ß╗¢c 1: Mß╗ƒ th╞░ mß╗Ñc dß╗▒ ├ín
+-
+-Mß╗ƒ Terminal (Command Prompt / PowerShell).
+-G├╡ lß╗çnh di chuyß╗ân v├áo th╞░ mß╗Ñc code:
+-bash
+-cd C:\Users\ADMIN\.gemini\antigravity\scratch\graphql-vs-rest-demo
+-B╞░ß╗¢c 2: Khß╗ƒi ─æß╗Öng Server M├íy chß╗º
+-
+-G├╡ lß╗çnh sau ─æß╗â bß║¡t Server l├¬n (Cß║ºn m├íy t├¡nh c├│ kß║┐t nß╗æi mß║íng ß╗ƒ lß║ºn ─æß║ºu t─⌐nh tiß║┐n):
+-bash
+-.\mvnw spring-boot:run
+-L╞░u ├╜: Khi thß║Ñy d├▓ng chß╗» Started DemoApplication... ngh─⌐a l├á m├íy chß╗º ─æ├ú sß║╡n s├áng ß╗ƒ cß╗òng 8080. Kh├┤ng tß║»t cß╗¡a sß╗ò Terminal n├áy trong suß╗æt qu├í tr├¼nh thuyß║┐t tr├¼nh.
+-4. Kß╗èCH Bß║óN THUYß║╛T TR├îNH Cß╗ñ THß╗é TR├èN Lß╗ÜP (Tß╗¬NG B╞»ß╗ÜC)
+-(Mß╗ƒ sß║╡n tr├¼nh duyß╗çt Web ra m├án h├¼nh m├íy chiß║┐u).
+-
+-Giai ─æoß║ín 1: Demo lß╗ùi OVER-FETCHING cß╗ºa REST (Ph├║t 12:00)
+-(Lß╗¥i thoß║íi): "Th╞░a thß║ºy c├┤, quay lß║íi b├ái to├ín tr├¬n App Mobile. Nhu cß║ºu cß╗ºa em l├á lß║Ñy T├¬n T├íc giß║ú sß╗æ 1. Vß╗¢i thiß║┐t kß║┐ REST truyß╗ün thß╗æng, em sß║╜ gß╗ìi ─æ╞░ß╗¥ng dß║½n lß║Ñy th├┤ng tin user nh╞░ sau:"
+-
+-≡ƒæë (H├ánh ─æß╗Öng): Mß╗ƒ Tab 1, g├╡ URL: http://localhost:8080/api/authors/1
+-
+-(Lß╗¥i thoß║íi chß╗æt lß╗ùi): "Thß║ºy c├┤ thß║Ñy kh├┤ng ß║í? M├án h├¼nh ─æiß╗çn thoß║íi b├⌐ x├¡u chß╗ë cß║ºn mß╗ùi chß╗» 'Nguyen Van A', nh╞░ng API trß║ú vß╗ü cho em nguy├¬n mß╗Öt cß╗Ñc JSON chß╗⌐a ─æß╗º combo: Tuß╗òi, ─Éiß╗çn thoß║íi, Email. ─É├óy l├á Over-fetching, rß║Ñt l├úng ph├¡ b─âng th├┤ng 4G cß╗ºa ng╞░ß╗¥i d├╣ng tß║úi App!"
+-
+-Giai ─æoß║ín 2: Demo lß╗ùi UNDER-FETCHING cß╗ºa REST (Ph├║t 13:00)
+-(Lß╗¥i thoß║íi): "Tiß║┐p theo, ß╗⌐ng dß╗Ñng cß║ºn lß║Ñy danh s├ích Ti├¬u ─æß╗ü b├ái viß║┐t ─æß╗â kß║╣p chung v├áo vß╗¢i c├íi T├¬n ─æ├│. Nh╞░ng c├íi API ban n├úy kh├┤ng ─æ├íp ß╗⌐ng ─æß╗º. Em bß║»t buß╗Öc phß║úi m├│c sang mß╗Öt cß╗òng API thß╗⌐ 2."
+-
+-≡ƒæë (H├ánh ─æß╗Öng): Mß╗ƒ Tab 2 (Giß╗» nguy├¬n Tab 1), g├╡ URL: http://localhost:8080/api/authors/1/posts
+-
+-(Lß╗¥i thoß║íi chß╗æt lß╗ùi): "─É├óy l├á lß╗ùi Under-fetching (Gß╗¡i 1 Request kh├┤ng ─æß╗º data). ─Éiß╗üu n├áy bß║»t m├íy t├¡nh cß╗ºa ng╞░ß╗¥i d├╣ng phß║úi chß╗ìc v├áo Server tß║¡n 2 lß║ºn, chß╗¥ phß║ún hß╗ôi 2 v├▓ng, l├ám App load chß║¡m h╞ín rß║Ñt nhiß╗üu."
+-
+-Giai ─æoß║ín 3: "Biß╗âu diß╗àn ph├⌐p m├áu" cß╗ºa GraphQL (Ph├║t 14:00 - ─éN ─ÉIß╗éM)
+-(Lß╗¥i thoß║íi): "Nh╞░ng vß╗¢i c├┤ng nghß╗ç GraphQL, mß╗ìi thß╗⌐ kh├íc biß╗çt ho├án to├án. D├╣ dß╗» liß╗çu phß╗⌐c tß║íp ─æß║┐n mß║Ñy, em chß╗ë giao tiß║┐p vß╗¢i ─æ├║ng 1 Endpoint (─æ╞░ß╗¥ng dß║½n) duy nhß║Ñt."
+-
+-≡ƒæë (H├ánh ─æß╗Öng): Mß╗ƒ Tab 3, g├╡ URL: http://localhost:8080/graphiql
+-
+-(Lß╗¥i thoß║íi): "─É├óy l├á giao diß╗çn Playground. Em sß║╜ gß╗¡i mß╗Öt y├¬u cß║ºu (Query) vß╗¢i c├║ ph├íp giß╗æng hß╗çt cß║Ñu tr├║c JSON. Em bß║úo GraphQL: N├áy, v├áo c╞í sß╗ƒ dß╗» liß╗çu lß║Ñy cho t├┤i ─æ├║ng Name (T├¬n), v├á gß╗ìi lu├┤n cho t├┤i Title (Ti├¬u ─æß╗ü b├ái) ra ─æ├óy."
+-
+-≡ƒæë (H├ánh ─æß╗Öng): Copy & Paste ─æoß║ín code n├áy v├áo ├┤ trß╗æng b├¬n tr├íi v├á bß║Ñm n├║t Γû╢∩╕Å (Play/Run) m├áu kem ß╗ƒ giß╗»a:
++*   **Vß╗ü ph├¡a REST:** Anh giß║úi th├¡ch l├á m├¼nh phß║úi tß║ío ra mß╗Öt ─æ╞░ß╗¥ng dß║½n API ho├án to├án mß╗¢i (v├¡ dß╗Ñ: `POST /api/authors/1/posts`) ─æß╗â tiß║┐p nhß║¡n dß╗» liß╗çu b├ío l├¬n Server.
++*   **Vß╗ü ph├¡a GraphQL:** Anh mß╗ƒ lß║íi tab `http://localhost:8080/graphiql`, kh├┤ng cß║ºn mß╗ƒ URL mß╗¢i n├áo cß║ú, x├│a trß║»ng ├┤ b├¬n tr├íi v├á g├╡ ─æoß║ín lß╗çnh (Mutation) nh╞░ sau:
+ 
+-graphql
+-query {
+-  author(id: "1") {
+-    name
+-    posts {
+-      title
+-    }
++```graphql
++mutation {
++  createPost(title: "B├ái viß║┐t mß╗¢i 100", content: "Nß╗Öi dung b├ái viß║┐t", authorId: "1") {
++    id
++    title
+   }
+ }
+-Giai ─æoß║ín 4: Ph├ón t├¡ch kß║┐t quß║ú & Chß╗æt b├ái (Ph├║t 15:00)
+-(Chß╗ë tay v├áo cß╗Öt Kß║┐t quß║ú trß║ú vß╗ü b├¬n phß║úi m├án h├¼nh)
+-
+-(Lß╗¥i thoß║íi chß╗æt hß║í): *"Thß║ºy c├┤ c├╣ng xem kß║┐t quß║ú trß║ú vß╗ü ß║í! Thß╗⌐ 1: N├│ trß║ú vß╗ü ch├¡nh x├íc [T├¬n] v├á [Ti├¬u ─æß╗ü]. Kh├┤ng c├│ sß╗æ ─æiß╗çn thoß║íi hay email thß╗½a th├úi n├áo cß║ú (Giß║úi quyß║┐t triß╗çt ─æß╗â Over-fetching). Thß╗⌐ 2: Dß╗» liß╗çu cß╗ºa T├íc giß║ú v├á B├ái viß║┐t ─æ╞░ß╗úc m├│c nß╗æi lß╗ông v├áo nhau, xuß║Ñt hiß╗çn ─æß║ºy ─æß╗º chß╗ë trong ─É├ÜNG 1 Lß║ªN Gß╗îI DUY NHß║ñT l├¬n m├íy chß╗º (Giß║úi quyß║┐t triß╗çt ─æß╗â Under-fetching).
+-
+-Nhß╗¥ t├¡nh linh hoß║ít n├áy, Client (ng╞░ß╗¥i l├ám UI App) ─æ╞░ß╗úc to├án quyß╗ün kiß╗âm so├ít dß╗» liß╗çu m├¼nh muß╗æn m├á kh├┤ng cß║ºn nhß╗¥ Backend tß║ío th├¬m API mß╗¢i. GraphQL ─æß║╖c biß╗çt ph├╣ hß╗úp cho c├íc hß╗ç thß╗æng phß╗⌐c tß║íp, ─æa nß╗ün tß║úng. Em xin kß║┐t th├║c b├ái Demo ß║í!"*
++```
+ 
++Bß║Ñm n├║t PLAY (Chß║íy).
+ 
+-Comment
+-Ctrl+Alt+M
++> **(Lß╗¥i thoß║íi chß╗æt hß║í):** *"Dß║í th╞░a c├┤, t├¡nh n─âng ─Éß╗ìc dß╗» liß╗çu gß╗ìi l├á Query, c├▓n t├¡nh n─âng Ghi/Tß║ío dß╗» liß╗çu gß╗ìi l├á Mutation. 
++> GraphQL v├┤ c├╣ng ngß║ºu ß╗ƒ chß╗ù: N├│ vß║½n d├╣ng chung 1 c├íi ─æ╞░ß╗¥ng dß║½n ban ─æß║ºu, kh├┤ng bß║»t Backend ─æß║╗ th├¬m Endpoint mß╗¢i.
++> Chß║│ng nhß╗»ng n├│ th├¬m ─æ╞░ß╗úc dß╗» liß╗çu v├áo Database, m├á ngay trong l├║c ─æ├│ n├│ tß╗▒ ─æß╗Öng lß║Ñy lu├┤n ID v├á Title cß╗ºa b├ái viß║┐t vß╗½a ─æ╞░ß╗úc tß║ío xong ─æß╗â trß║ú vß╗ü cho Client chß╗ë bß║▒ng 1 c├óu lß╗çnh duy nhß║Ñt. Sß║ích sß║╜ v├á nguy hiß╗âm h╞ín REST rß║Ñt nhiß╗üu ß║í!"*
+diff --git a/src/main/java/com/example/demo/AuthorGraphqlController.java b/src/main/java/com/example/demo/AuthorGraphqlController.java
+index 924a2ab..f5742fa 100644
+--- a/src/main/java/com/example/demo/AuthorGraphqlController.java
++++ b/src/main/java/com/example/demo/AuthorGraphqlController.java
+@@ -19,4 +19,9 @@ public class AuthorGraphqlController {
+     public List<Post> posts(Author author) {
+         return DataStore.getPostsByAuthorId(author.getId());
+     }
++
++    @org.springframework.graphql.data.method.annotation.MutationMapping
++    public Post createPost(@Argument String title, @Argument String content, @Argument String authorId) {
++        return DataStore.addPost(title, content, authorId);
++    }
+ }
+diff --git a/src/main/java/com/example/demo/AuthorRestController.java b/src/main/java/com/example/demo/AuthorRestController.java
+index 1f52edf..3d4e3c7 100644
+--- a/src/main/java/com/example/demo/AuthorRestController.java
++++ b/src/main/java/com/example/demo/AuthorRestController.java
+@@ -22,4 +22,20 @@ public class AuthorRestController {
+     public List<Post> getAuthorPosts(@PathVariable String id) {
+         return DataStore.getPostsByAuthorId(id);
+     }
++
++    // ─É╞░ß╗¥ng dß║½n 3: Tß║ío b├ái viß║┐t mß╗¢i (REST POST)
++    @org.springframework.web.bind.annotation.PostMapping("/{id}/posts")
++    public Post createPost(@PathVariable String id, @org.springframework.web.bind.annotation.RequestBody PostRequest request) {
++        return DataStore.addPost(request.getTitle(), request.getContent(), id);
++    }
++}
++
++class PostRequest {
++    private String title;
++    private String content;
++
++    public String getTitle() { return title; }
++    public void setTitle(String title) { this.title = title; }
++    public String getContent() { return content; }
++    public void setContent(String content) { this.content = content; }
+ }
+diff --git a/src/main/java/com/example/demo/DataStore.java b/src/main/java/com/example/demo/DataStore.java
+index 52fe31f..c66daa4 100644
+--- a/src/main/java/com/example/demo/DataStore.java
++++ b/src/main/java/com/example/demo/DataStore.java
+@@ -1,30 +1,45 @@
+ package com.example.demo;
+ 
++import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+ import java.util.stream.Collectors;
+ 
+ public class DataStore {
+-    public static List<Author> getAuthors() {
+-        return Arrays.asList(
++
++    // Khß╗ƒi tß║ío List c├│ thß╗â thay ─æß╗òi (Mutable List)
++    private static List<Author> authors = new ArrayList<>(Arrays.asList(
+             new Author("1", "Nguyen Van A", 20, "0987654321", "nva@gmail.com"),
+             new Author("2", "Tran Thi B", 22, "0123456789", "ttb@gmail.com")
+-        );
++    ));
++
++    private static List<Post> posts = new ArrayList<>(Arrays.asList(
++            new Post("101", "C─ân bß║ún vß╗ü GraphQL", "H├┤m nay ch├║ng ta sß║╜ hß╗ìc l├╜ thuyß║┐t", "1"),
++            new Post("102", "C├ích d├╣ng REST API", "V├¡ dß╗Ñ chi tiß║┐t", "1"),
++            new Post("103", "Series Spring Boot", "H╞░ß╗¢ng dß║½n tß║ío Project", "2")
++    ));
++
++    public static List<Author> getAuthors() {
++        return authors;
+     }
+ 
+     public static Author getAuthorById(String id) {
+-        return getAuthors().stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
++        return authors.stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
+     }
+ 
+     public static List<Post> getPosts() {
+-        return Arrays.asList(
+-            new Post("101", "C─ân bß║ún vß╗ü GraphQL", "H├┤m nay ch├║ng ta sß║╜ hß╗ìc l├╜ thuyß║┐t", "1"),
+-            new Post("102", "C├ích d├╣ng REST API", "V├¡ dß╗Ñ chi tiß║┐t", "1"),
+-            new Post("103", "Series Spring Boot", "H╞░ß╗¢ng dß║½n tß║ío Project", "2")
+-        );
++        return posts;
+     }
+ 
+     public static List<Post> getPostsByAuthorId(String authorId) {
+-        return getPosts().stream().filter(p -> p.getAuthorId().equals(authorId)).collect(Collectors.toList());
++        return posts.stream().filter(p -> p.getAuthorId().equals(authorId)).collect(Collectors.toList());
++    }
++
++    public static Post addPost(String title, String content, String authorId) {
++        // Tß║ío ID giß║ú (t─âng dß║ºn) dß╗▒a tr├¬n sß╗æ l╞░ß╗úng hiß╗çn tß║íi
++        String id = String.valueOf(posts.size() + 101);
++        Post newPost = new Post(id, title, content, authorId);
++        posts.add(newPost);
++        return newPost;
+     }
+ }
+diff --git a/src/main/resources/graphql/schema.graphqls b/src/main/resources/graphql/schema.graphqls
+index b8a7b1c..13ef342 100644
+--- a/src/main/resources/graphql/schema.graphqls
++++ b/src/main/resources/graphql/schema.graphqls
+@@ -16,3 +16,7 @@ type Post {
+     title: String!
+     content: String
+ }
++
++type Mutation {
++    createPost(title: String!, content: String, authorId: ID!): Post
++}
