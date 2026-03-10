@@ -45,4 +45,20 @@ public class AuthorRestController {
         Post post = DataStore.addPost(request.getTitle(), request.getContent(), id);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
+
+    // Đường dẫn 3: Tạo bài viết mới (REST POST)
+    @org.springframework.web.bind.annotation.PostMapping("/{id}/posts")
+    public Post createPost(@PathVariable String id, @org.springframework.web.bind.annotation.RequestBody PostRequest request) {
+        return DataStore.addPost(request.getTitle(), request.getContent(), id);
+    }
+}
+
+class PostRequest {
+    private String title;
+    private String content;
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 }
