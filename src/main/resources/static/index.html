@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -36,6 +36,8 @@
       margin: 0 auto;
     }
 
+    .full-width { grid-column: 1 / -1; }
+
     .panel {
       background: #1e293b;
       border-radius: 12px;
@@ -54,6 +56,7 @@
 
     .panel-header.rest-header { background: #0c4a6e; border-bottom: 2px solid #38bdf8; color: #38bdf8; }
     .panel-header.gql-header  { background: #4a044e; border-bottom: 2px solid #e879f9; color: #e879f9; }
+    .panel-header.race-header { background: linear-gradient(90deg, #0c4a6e, #4a044e); border-bottom: 2px solid #a78bfa; color: #a78bfa; }
 
     .badge {
       font-size: 0.7rem;
@@ -64,9 +67,9 @@
     }
     .badge-rest { background: #38bdf8; color: #0c4a6e; }
     .badge-gql  { background: #e879f9; color: #4a044e; }
+    .badge-race { background: #a78bfa; color: #1e1b4b; }
 
     .panel-body { padding: 20px; }
-
     .section { margin-bottom: 24px; }
     .section:last-child { margin-bottom: 0; }
 
@@ -94,14 +97,8 @@
       transition: border-color 0.2s;
     }
 
-    input[type="text"]:focus, textarea:focus {
-      outline: none;
-      border-color: #38bdf8;
-    }
-
-    .gql-panel input[type="text"]:focus, .gql-panel textarea:focus {
-      border-color: #e879f9;
-    }
+    input[type="text"]:focus, textarea:focus { outline: none; border-color: #38bdf8; }
+    .gql-panel input[type="text"]:focus, .gql-panel textarea:focus { border-color: #e879f9; }
 
     .btn-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 
@@ -117,11 +114,19 @@
 
     button:active { transform: scale(0.97); }
     button:hover  { opacity: 0.85; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .btn-rest    { background: #38bdf8; color: #0c4a6e; }
     .btn-danger  { background: #f43f5e; color: #fff; }
     .btn-gql     { background: #e879f9; color: #4a044e; }
     .btn-neutral { background: #334155; color: #e2e8f0; }
+    .btn-race    { background: linear-gradient(90deg, #38bdf8, #e879f9); color: #0f172a; font-size: 1rem; padding: 12px 28px; }
+    .btn-race2   { background: linear-gradient(90deg, #22c55e, #38bdf8); color: #0f172a; font-size: 1rem; padding: 12px 28px; }
+    .btn-clear-cache { background: transparent; border: 1px solid #64748b; color: #94a3b8; font-size: 0.82rem; padding: 6px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .btn-clear-cache:hover { border-color: #f43f5e; color: #f43f5e; }
+    .race-round-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .race-round-btn-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .race-round-note { text-align: center; font-size: 0.82rem; color: #94a3b8; min-height: 1.2em; }
 
     .response-box {
       background: #0f172a;
@@ -151,6 +156,30 @@
       letter-spacing: 0.5px;
     }
 
+    .metrics {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .metric {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-family: 'Cascadia Code', monospace;
+    }
+
+    .metric-val { font-weight: 700; }
+    .metric-val.good { color: #4ade80; }
+    .metric-val.warn { color: #fbbf24; }
+    .metric-val.bad  { color: #f87171; }
+
     .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .tag {
       background: #1e3a5f;
@@ -179,22 +208,327 @@
 
     .info-box.gql { border-color: #e879f9; background: #4a044e22; color: #f0abfc; }
 
-    .divider {
-      border: none;
-      border-top: 1px solid #334155;
-      margin: 20px 0;
+    .divider { border: none; border-top: 1px solid #334155; margin: 20px 0; }
+
+    .mb-8  { margin-bottom: 8px; }
+    .mb-10 { margin-bottom: 10px; }
+    .compare-desc { font-size: 0.83rem; color: #94a3b8; line-height: 1.6; margin-bottom: 12px; }
+
+    /* Race section */
+    .race-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+    .race-col h3 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .status-dot {
-      width: 8px; height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
+    .race-col h3.rest-title { color: #38bdf8; }
+    .race-col h3.gql-title  { color: #e879f9; }
+
+    .timeline { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+    .timeline-row { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; }
+
+    .timeline-label {
+      width: 120px;
+      flex-shrink: 0;
+      color: #94a3b8;
+      text-align: right;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.72rem;
+    }
+
+    .timeline-bar-wrap {
+      flex: 1;
+      height: 28px;
+      background: #0f172a;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #334155;
+    }
+
+    .timeline-bar {
+      height: 100%;
+      border-radius: 6px;
+      width: 0;
+      transition: width 0.6s ease-out;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Cascadia Code', monospace;
+    }
+
+    .timeline-bar.rest-bar     { background: linear-gradient(90deg, #0c4a6e, #38bdf8); color: #0c4a6e; }
+    .timeline-bar.gql-bar      { background: linear-gradient(90deg, #4a044e, #e879f9); color: #4a044e; }
+    .timeline-bar.rest-bar-dim { background: linear-gradient(90deg, #0c4a6e88, #38bdf888); color: #0c4a6eaa; }
+
+    .timeline-time {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.75rem;
+      width: 55px;
+      text-align: left;
+      color: #64748b;
+    }
+
+    .scoreboard { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+
+    .score-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .score-card.rest-card { border-color: #38bdf844; }
+    .score-card.gql-card  { border-color: #e879f944; }
+
+    .score-card .score-label {
+      font-size: 0.72rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .score-card .score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #1e293b;
+      font-size: 0.82rem;
+    }
+
+    .score-card .score-row:last-child { border-bottom: none; }
+    .score-card .score-row .score-key { color: #94a3b8; }
+    .score-card .score-row .score-value { font-weight: 700; font-family: 'Cascadia Code', monospace; }
+    .score-value.rest-color { color: #38bdf8; }
+    .score-value.gql-color  { color: #e879f9; }
+
+    .winner-banner {
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 16px;
+      font-weight: 700;
+      font-size: 1rem;
+      background: linear-gradient(90deg, #4a044e44, #e879f922);
+      border: 1px solid #e879f944;
+      color: #e879f9;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .winner-banner.show { opacity: 1; }
+    .winner-banner.rest-win { background: linear-gradient(90deg, #0c4a6e44, #38bdf822); border-color: #38bdf844; color: #38bdf8; }
+
+    .race-response-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.78rem;
+      min-height: 60px;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #a3e635;
+    }
+
+    .scenario-box {
+      background: #1e293b;
+      border: 1px dashed #475569;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .scenario-box .scenario-title { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+    .scenario-box .scenario-desc  { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
+
+    .scenario-box .scenario-need {
       display: inline-block;
-      margin-right: 6px;
+      margin-top: 8px;
+      background: #4ade8022;
+      border: 1px solid #4ade8044;
+      color: #4ade80;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: 'Cascadia Code', monospace;
+    }
+
+    .race-btn-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+
+    /* REST Advantages */
+    .panel-header.rest-adv-header { background: #064e3b; border-bottom: 2px solid #34d399; color: #34d399; }
+    .badge-rest-adv { background: #34d399; color: #064e3b; }
+    .info-box.rest-adv { border-color: #34d399; background: #064e3b22; color: #6ee7b7; }
+
+    .adv-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+    .adv-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .adv-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #34d399;
+    }
+
+    .cache-label { font-size: 0.72rem; color: #64748b; margin-bottom: 4px; }
+    .cache-label-gap { font-size: 0.72rem; color: #64748b; margin: 6px 0 4px; }
+    .cache-section { margin-top: 12px; }
+    .url-section { margin-top: 8px; }
+    .url-section-title { font-size: 0.72rem; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+    .url-section-gap { margin-top: 12px; }
+    .btn-row-gap { margin-top: 10px; }
+
+    .adv-card-desc {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .status-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .status-box {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+    }
+
+    .status-code {
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .status-code.ok   { color: #4ade80; }
+    .status-code.err  { color: #f87171; }
+    .status-code.gql-ok { color: #fbbf24; }
+
+    .status-label { font-size: 0.7rem; color: #64748b; }
+
+    .cache-bar-wrap {
+      background: #1e293b;
+      border-radius: 6px;
+      height: 24px;
+      overflow: hidden;
+      margin: 4px 0;
+      border: 1px solid #334155;
+    }
+
+    .cache-bar {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Cascadia Code', monospace;
+      width: 0;
+      transition: width 0.5s ease-out;
+    }
+
+    .cache-bar.fresh { background: linear-gradient(90deg, #0c4a6e, #38bdf8); color: #0c4a6e; }
+    .cache-bar.cached { background: linear-gradient(90deg, #064e3b, #34d399); color: #064e3b; }
+
+    .url-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      margin: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .url-method {
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    .url-method.get  { background: #4ade8033; color: #4ade80; }
+    .url-method.post { background: #fbbf2433; color: #fbbf24; }
+
+    .url-text { color: #7dd3fc; word-break: break-all; }
+
+    .adv-response-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      min-height: 50px;
+      max-height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 8px;
+    }
+
+    .adv-response-box.ok    { color: #4ade80; }
+    .adv-response-box.error { color: #f87171; }
+    .adv-response-box.warn  { color: #fbbf24; }
+    .adv-response-box.empty { color: #475569; font-style: italic; }
+
+    @media (max-width: 1100px) {
+      .adv-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 900px) {
+      .adv-grid { grid-template-columns: 1fr; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .loading { animation: pulse 1s infinite; }
+
+    @media (max-width: 900px) {
       .container { grid-template-columns: 1fr; }
+      .race-grid { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr; }
       header h1 { font-size: 1.4rem; }
     }
   </style>
@@ -207,28 +541,26 @@
     <span class="vs">vs</span>
     <span class="gql">GraphQL</span>
   </h1>
-  <p>Demo so sánh hai phong cách thiết kế API — Spring Boot 4.0</p>
+  <p>Demo so s&#225;nh hai phong c&#225;ch thi&#7871;t k&#7871; API &#8212; Spring Boot 4.0</p>
 </header>
 
 <div class="container">
 
-  <!-- ===== REST PANEL ===== -->
+  <!-- REST PANEL -->
   <div class="panel">
     <div class="panel-header rest-header">
       <span class="badge badge-rest">REST</span>
-      REST API — <code>/api/authors</code>
+      REST API &#8212; <code>/api/authors</code>
     </div>
     <div class="panel-body">
-
       <div class="info-box">
-        REST yêu cầu nhiều endpoint khác nhau. Mỗi lần gọi trả về toàn bộ dữ liệu của resource (có thể gây <strong>over-fetching</strong> hoặc <strong>under-fetching</strong>).
+        REST y&#234;u c&#7847;u nhi&#7873;u endpoint kh&#225;c nhau. M&#7895;i l&#7847;n g&#7885;i tr&#7843; v&#7873; to&#224;n b&#7897; d&#7919; li&#7879;u c&#7911;a resource (c&#243; th&#7875; g&#226;y <strong>over-fetching</strong> ho&#7863;c <strong>under-fetching</strong>).
       </div>
 
-      <!-- GET Author -->
       <div class="section">
-        <div class="section-title">GET — Lấy thông tin tác giả</div>
-        <label>Author ID</label>
-        <input type="text" id="rest-author-id" value="1" />
+        <div class="section-title">GET &#8212; L&#7845;y th&#244;ng tin t&#225;c gi&#7843;</div>
+        <label for="rest-author-id">Author ID</label>
+        <input type="text" id="rest-author-id" value="1" title="Author ID" placeholder="Nh&#7853;p ID t&#225;c gi&#7843;" />
         <div class="tag-row">
           <span class="tag" onclick="setVal('rest-author-id','1')">ID: 1</span>
           <span class="tag" onclick="setVal('rest-author-id','2')">ID: 2</span>
@@ -237,17 +569,17 @@
         <div class="btn-row">
           <button class="btn-rest" onclick="restGetAuthor()">GET /api/authors/{id}</button>
         </div>
+        <div id="metrics-get-author" class="metrics"></div>
         <div class="response-label">Response</div>
-        <div class="response-box empty" id="res-get-author">Chưa gửi request...</div>
+        <div class="response-box empty" id="res-get-author">Ch&#432;a g&#7917;i request...</div>
       </div>
 
       <hr class="divider"/>
 
-      <!-- GET Posts -->
       <div class="section">
-        <div class="section-title">GET — Lấy bài viết của tác giả</div>
-        <label>Author ID</label>
-        <input type="text" id="rest-posts-id" value="1" />
+        <div class="section-title">GET &#8212; L&#7845;y b&#224;i vi&#7871;t c&#7911;a t&#225;c gi&#7843;</div>
+        <label for="rest-posts-id">Author ID</label>
+        <input type="text" id="rest-posts-id" value="1" title="Author ID" placeholder="Nh&#7853;p ID t&#225;c gi&#7843;" />
         <div class="tag-row">
           <span class="tag" onclick="setVal('rest-posts-id','1')">ID: 1</span>
           <span class="tag" onclick="setVal('rest-posts-id','2')">ID: 2</span>
@@ -255,60 +587,58 @@
         <div class="btn-row">
           <button class="btn-rest" onclick="restGetPosts()">GET /api/authors/{id}/posts</button>
         </div>
+        <div id="metrics-get-posts" class="metrics"></div>
         <div class="response-label">Response</div>
-        <div class="response-box empty" id="res-get-posts">Chưa gửi request...</div>
+        <div class="response-box empty" id="res-get-posts">Ch&#432;a g&#7917;i request...</div>
       </div>
 
       <hr class="divider"/>
 
-      <!-- POST new post -->
       <div class="section">
-        <div class="section-title">POST — Tạo bài viết mới</div>
-        <label>Author ID</label>
-        <input type="text" id="rest-new-author-id" value="1" style="margin-bottom:8px"/>
-        <label>Title</label>
-        <input type="text" id="rest-new-title" value="Bài viết mới" style="margin-bottom:8px"/>
-        <label>Content</label>
-        <input type="text" id="rest-new-content" value="Nội dung bài viết" />
+        <div class="section-title">POST &#8212; T&#7841;o b&#224;i vi&#7871;t m&#7899;i</div>
+        <label for="rest-new-author-id">Author ID</label>
+        <input type="text" id="rest-new-author-id" value="1" title="Author ID" placeholder="Nh&#7853;p ID" class="mb-8" />
+        <label for="rest-new-title">Title</label>
+        <input type="text" id="rest-new-title" value="B&#224;i vi&#7871;t m&#7899;i" title="Ti&#234;u &#273;&#7873;" placeholder="Nh&#7853;p ti&#234;u &#273;&#7873;" class="mb-8" />
+        <label for="rest-new-content">Content</label>
+        <input type="text" id="rest-new-content" value="N&#7897;i dung b&#224;i vi&#7871;t" title="N&#7897;i dung" placeholder="Nh&#7853;p n&#7897;i dung" />
         <div class="btn-row">
           <button class="btn-danger" onclick="restCreatePost()">POST /api/authors/{id}/posts</button>
         </div>
+        <div id="metrics-create-post" class="metrics"></div>
         <div class="response-label">Response</div>
-        <div class="response-box empty" id="res-create-post">Chưa gửi request...</div>
+        <div class="response-box empty" id="res-create-post">Ch&#432;a g&#7917;i request...</div>
       </div>
-
     </div>
   </div>
 
-  <!-- ===== GRAPHQL PANEL ===== -->
+  <!-- GRAPHQL PANEL -->
   <div class="panel gql-panel">
     <div class="panel-header gql-header">
       <span class="badge badge-gql">GraphQL</span>
-      GraphQL API — <code>/graphql</code>
+      GraphQL API &#8212; <code>/graphql</code>
     </div>
     <div class="panel-body">
-
       <div class="info-box gql">
-        GraphQL dùng <strong>một endpoint duy nhất</strong>. Client chỉ lấy đúng các field mình cần — không hơn, không kém. Không cần gọi nhiều lần.
+        GraphQL d&#249;ng <strong>m&#7897;t endpoint duy nh&#7845;t</strong>. Client ch&#7881; l&#7845;y &#273;&#250;ng c&#225;c field m&#236;nh c&#7847;n &#8212; kh&#244;ng h&#417;n, kh&#244;ng k&#233;m. Kh&#244;ng c&#7847;n g&#7885;i nhi&#7873;u l&#7847;n.
       </div>
 
-      <!-- Query builder -->
       <div class="section">
-        <div class="section-title">Chọn query mẫu</div>
+        <div class="section-title">Ch&#7885;n query m&#7851;u</div>
         <div class="tag-row">
-          <span class="tag gql-tag" onclick="setQuery('onlyName')">Chỉ lấy tên</span>
-          <span class="tag gql-tag" onclick="setQuery('withPosts')">Tác giả + bài viết</span>
-          <span class="tag gql-tag" onclick="setQuery('minimalPost')">Chỉ title bài viết</span>
-          <span class="tag gql-tag" onclick="setQuery('full')">Toàn bộ fields</span>
-          <span class="tag gql-tag" onclick="setQuery('createPost')">Mutation: tạo bài viết</span>
+          <span class="tag gql-tag" onclick="setQuery('onlyName')">Ch&#7881; l&#7845;y t&#234;n</span>
+          <span class="tag gql-tag" onclick="setQuery('withPosts')">T&#225;c gi&#7843; + b&#224;i vi&#7871;t</span>
+          <span class="tag gql-tag" onclick="setQuery('minimalPost')">Ch&#7881; title b&#224;i vi&#7871;t</span>
+          <span class="tag gql-tag" onclick="setQuery('full')">To&#224;n b&#7897; fields</span>
+          <span class="tag gql-tag" onclick="setQuery('createPost')">Mutation: t&#7841;o b&#224;i vi&#7871;t</span>
         </div>
       </div>
 
       <div class="section">
-        <label>Author ID</label>
-        <input type="text" id="gql-author-id" value="1" style="margin-bottom:10px"/>
-        <label>Query / Mutation</label>
-        <textarea id="gql-query" rows="10">query {
+        <label for="gql-author-id">Author ID</label>
+        <input type="text" id="gql-author-id" value="1" title="Author ID" placeholder="Nh&#7853;p ID" class="mb-10" />
+        <label for="gql-query">Query / Mutation</label>
+        <textarea id="gql-query" rows="10" title="GraphQL Query" placeholder="Nh&#7853;p GraphQL query...">query {
   author(id: "1") {
     name
     posts {
@@ -317,147 +647,738 @@
   }
 }</textarea>
         <div class="btn-row">
-          <button class="btn-gql" onclick="runGraphQL()">Gửi GraphQL Request</button>
-          <button class="btn-neutral" onclick="openGraphiQL()">Mở GraphiQL ↗</button>
+          <button class="btn-gql" onclick="runGraphQL()">G&#7917;i GraphQL Request</button>
+          <button class="btn-neutral" onclick="openGraphiQL()">M&#7903; GraphiQL &#x2197;</button>
         </div>
+        <div id="metrics-gql" class="metrics"></div>
         <div class="response-label">Response</div>
-        <div class="response-box empty" id="res-gql">Chưa gửi request...</div>
+        <div class="response-box empty" id="res-gql">Ch&#432;a g&#7917;i request...</div>
       </div>
 
       <hr class="divider"/>
 
-      <!-- So sánh -->
       <div class="section">
-        <div class="section-title">Demo: Over-fetching vs GraphQL</div>
-        <p style="font-size:0.83rem;color:#94a3b8;line-height:1.6;margin-bottom:12px">
-          Nhấn từng nút để thấy sự khác biệt khi client chỉ cần <strong>tên tác giả</strong>.
+        <div class="section-title">Demo nhanh: Over-fetching vs GraphQL</div>
+        <p class="compare-desc">
+          Nh&#7845;n t&#7915;ng n&#250;t &#273;&#7875; th&#7845;y s&#7921; kh&#225;c bi&#7879;t khi client ch&#7881; c&#7847;n <strong>t&#234;n t&#225;c gi&#7843;</strong>.
         </p>
         <div class="btn-row">
           <button class="btn-rest" onclick="demoOverFetching()">REST (over-fetching)</button>
-          <button class="btn-gql" onclick="demoGraphQLPrecise()">GraphQL (chính xác)</button>
+          <button class="btn-gql" onclick="demoGraphQLPrecise()">GraphQL (ch&#237;nh x&#225;c)</button>
         </div>
+        <div id="metrics-compare" class="metrics"></div>
         <div class="response-label">Response</div>
-        <div class="response-box empty" id="res-compare">Nhấn một trong hai nút...</div>
+        <div class="response-box empty" id="res-compare">Nh&#7845;n m&#7897;t trong hai n&#250;t...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RACE SECTION -->
+  <div class="panel full-width">
+    <div class="panel-header race-header">
+      <span class="badge badge-race">RACE</span>
+      Cu&#7897;c &#273;ua th&#7921;c t&#7871; &#8212; REST vs GraphQL
+    </div>
+    <div class="panel-body">
+
+      <div class="scenario-box">
+        <div class="scenario-title">B&#224;i to&#225;n: Hi&#7875;n th&#7883; Trang Profile T&#225;c Gi&#7843;</div>
+        <div class="scenario-desc">
+          &#7912;ng d&#7909;ng mobile c&#7847;n hi&#7875;n th&#7883; <strong>t&#234;n t&#225;c gi&#7843;</strong> v&#224; <strong>ti&#234;u &#273;&#7873; c&#225;c b&#224;i vi&#7871;t</strong>.<br>
+          Kh&#244;ng c&#7847;n email, phone, age, hay n&#7897;i dung chi ti&#7871;t b&#224;i vi&#7871;t.
+        </div>
+        <div class="scenario-need">Client c&#7847;n: { name, posts[].title }</div>
       </div>
 
+      <div class="race-btn-wrap">
+        <div class="race-round-btns">
+          <div class="race-round-btn-row">
+            <button class="btn btn-race" id="btn-start-race" onclick="startRace()">&#x1F680; L&#7847;n 1 &#8212; Kh&#244;ng cache</button>
+            <button class="btn btn-race2" id="btn-start-race2" onclick="startRace2()">&#x26A1; L&#7847;n 2 &#8212; REST c&#243; cache</button>
+          </div>
+          <div class="race-round-note" id="race-round-note">Ch&#7841;y L&#7847;n 1 tr&#432;&#7899;c &#273;&#7875; REST c&#243; cache cho L&#7847;n 2</div>
+        </div>
+      </div>
+
+      <div class="race-grid">
+        <div class="race-col">
+          <h3 class="rest-title" id="race-rest-col-title"><span class="badge badge-rest">REST</span> C&#7847;n 2 Request tu&#7847;n t&#7921;</h3>
+          <div class="timeline">
+            <div class="timeline-row">
+              <div class="timeline-label">GET /authors/1</div>
+              <div class="timeline-bar-wrap"><div class="timeline-bar rest-bar" id="race-rest-bar1"></div></div>
+              <div class="timeline-time" id="race-rest-t1">&#8212;</div>
+            </div>
+            <div class="timeline-row">
+              <div class="timeline-label">GET .../posts</div>
+              <div class="timeline-bar-wrap"><div class="timeline-bar rest-bar-dim" id="race-rest-bar2"></div></div>
+              <div class="timeline-time" id="race-rest-t2">&#8212;</div>
+            </div>
+            <div class="timeline-row">
+              <div class="timeline-label"><strong>T&#7893;ng</strong></div>
+              <div class="timeline-bar-wrap"><div class="timeline-bar rest-bar" id="race-rest-total-bar"></div></div>
+              <div class="timeline-time" id="race-rest-total" title="T&#7893;ng REST">&#8212;</div>
+            </div>
+          </div>
+          <div class="response-label">REST Response (d&#7919; li&#7879;u th&#7915;a &#273;&#225;nh d&#7845;u &#10060;)</div>
+          <div class="race-response-box" id="race-rest-response"></div>
+        </div>
+        <div class="race-col">
+          <h3 class="gql-title" id="race-gql-col-title"><span class="badge badge-gql">GraphQL</span> Ch&#7881; 1 Request duy nh&#7845;t</h3>
+          <div class="timeline">
+            <div class="timeline-row">
+              <div class="timeline-label">POST /graphql</div>
+              <div class="timeline-bar-wrap"><div class="timeline-bar gql-bar" id="race-gql-bar1"></div></div>
+              <div class="timeline-time" id="race-gql-t1">&#8212;</div>
+            </div>
+            <div class="timeline-row">
+              <div class="timeline-label">&nbsp;</div>
+              <div class="timeline-bar-wrap"><div class="timeline-bar" id="race-gql-bar-empty"></div></div>
+              <div class="timeline-time">&nbsp;</div>
+            </div>
+            <div class="timeline-row">
+              <div class="timeline-label"><strong>T&#7893;ng</strong></div>
+              <div class="timeline-bar-wrap"><div class="timeline-bar gql-bar" id="race-gql-total-bar"></div></div>
+              <div class="timeline-time" id="race-gql-total" title="T&#7893;ng GraphQL">&#8212;</div>
+            </div>
+          </div>
+          <div class="response-label">GraphQL Response (ch&#237;nh x&#225;c nh&#7919;ng g&#236; c&#7847;n)</div>
+          <div class="race-response-box" id="race-gql-response"></div>
+        </div>
+      </div>
+
+      <div class="scoreboard">
+        <div class="score-card rest-card">
+          <div class="score-label">REST API</div>
+          <div class="score-row"><span class="score-key">S&#7889; request</span><span class="score-value rest-color" id="score-rest-reqs">&#8212;</span></div>
+          <div class="score-row"><span class="score-key">T&#7893;ng th&#7901;i gian</span><span class="score-value rest-color" id="score-rest-time">&#8212;</span></div>
+          <div class="score-row"><span class="score-key">Payload nh&#7853;n</span><span class="score-value rest-color" id="score-rest-size">&#8212;</span></div>
+          <div class="score-row"><span class="score-key">D&#7919; li&#7879;u th&#7915;a</span><span class="score-value bad" id="score-rest-waste">&#8212;</span></div>
+        </div>
+        <div class="score-card gql-card">
+          <div class="score-label">GraphQL</div>
+          <div class="score-row"><span class="score-key">S&#7889; request</span><span class="score-value gql-color" id="score-gql-reqs">&#8212;</span></div>
+          <div class="score-row"><span class="score-key">T&#7893;ng th&#7901;i gian</span><span class="score-value gql-color" id="score-gql-time">&#8212;</span></div>
+          <div class="score-row"><span class="score-key">Payload nh&#7853;n</span><span class="score-value gql-color" id="score-gql-size">&#8212;</span></div>
+          <div class="score-row"><span class="score-key">D&#7919; li&#7879;u th&#7915;a</span><span class="score-value good" id="score-gql-waste">&#8212;</span></div>
+        </div>
+      </div>
+
+      <div class="winner-banner" id="winner-banner"></div>
+    </div>
+  </div>
+
+  <!-- REST ADVANTAGES PANEL -->
+  <div class="panel full-width">
+    <div class="panel-header rest-adv-header">
+      <span class="badge badge-rest-adv">REST</span>
+      REST c&#361;ng c&#243; nh&#7919;ng &#273;i&#7873;m m&#7841;nh ri&#234;ng
+    </div>
+    <div class="panel-body">
+
+      <div class="info-box rest-adv">
+        M&#7895;i c&#244;ng ngh&#7879; &#273;&#7873;u c&#243; tr&#432;&#7901;ng h&#7907;p s&#7917; d&#7909;ng ph&#249; h&#7907;p. D&#432;&#7899;i &#273;&#226;y l&#224; nh&#7919;ng t&#237;nh n&#259;ng n&#7893;i b&#7853;t c&#7911;a REST m&#224; GraphQL kh&#244;ng c&#243; ho&#7863;c kh&#243; th&#7921;c hi&#7879;n &#273;&#432;&#7907;c theo c&#225;ch t&#432;&#417;ng t&#7921;.
+      </div>
+
+      <div class="adv-grid">
+
+        <!-- HTTP Status Codes -->
+        <div class="adv-card">
+          <div class="adv-card-title">&#x2139;&#xfe0f; HTTP Status Codes r&#245; r&#224;ng</div>
+          <div class="adv-card-desc">
+            REST d&#249;ng &#273;&#250;ng m&#227; HTTP: <strong>404</strong> khi kh&#244;ng t&#236;m th&#7845;y, <strong>201</strong> khi t&#7841;o m&#7899;i. GraphQL lu&#244;n tr&#7843; <strong>200 OK</strong> d&#249; c&#243; l&#7895;i &#8212; l&#7895;i &#7849;n trong body JSON.
+          </div>
+          <div class="btn-row">
+            <button class="btn-rest" onclick="demoStatus200()">REST t&#236;m &#273;&#432;&#7907;c (200)</button>
+            <button class="btn-danger" onclick="demoStatus404()">REST 404 c&#243; r&#245;?</button>
+            <button class="btn-neutral" onclick="demoGqlMissing()">GraphQL m&#7845;t (v&#7851;n 200)</button>
+          </div>
+          <div class="status-compare">
+            <div class="status-box">
+              <span class="status-code ok" id="sc-rest-code">?</span>
+              <span class="status-label">REST HTTP Status</span>
+            </div>
+            <div class="status-box">
+              <span class="status-code gql-ok" id="sc-gql-code">?</span>
+              <span class="status-label">GraphQL HTTP Status</span>
+            </div>
+          </div>
+          <div class="adv-response-box empty" id="res-status-compare">Nh&#7845;n m&#7897;t trong c&#225;c n&#250;t...</div>
+        </div>
+
+        <!-- HTTP Caching -->
+        <div class="adv-card">
+          <div class="adv-card-title">&#x26a1; HTTP Caching t&#7921; nhi&#234;n</div>
+          <div class="adv-card-desc">
+            REST GET c&#243; header <code>Cache-Control</code> &#8212; browser/CDN cache t&#7921; &#273;&#7897;ng. GraphQL d&#249;ng POST n&#234;n kh&#244;ng cache &#273;&#432;&#7907;c. L&#7847;n g&#7885;i th&#249; 2 REST s&#7869; nhanh h&#417;n r&#245; r&#7879;t.
+          </div>
+          <div class="btn-row">
+            <button class="btn-rest" onclick="demoCaching()">Ch&#7841;y demo Cache</button>
+          </div>
+          <div class="cache-section">
+            <div class="cache-label">L&#7847;n 1 &#8212; Fresh request</div>
+            <div class="cache-bar-wrap"><div class="cache-bar fresh" id="cache-bar-1"></div></div>
+            <div class="cache-label-gap">L&#7847;n 2 &#8212; T&#7915; cache (REST)</div>
+            <div class="cache-bar-wrap"><div class="cache-bar cached" id="cache-bar-2"></div></div>
+            <div class="cache-label-gap">GraphQL (POST &#8212; kh&#244;ng cache)</div>
+            <div class="cache-bar-wrap"><div class="cache-bar fresh" id="cache-bar-gql"></div></div>
+          </div>
+          <div class="adv-response-box empty" id="res-cache">Nh&#7845;n "Ch&#7841;y demo Cache"...</div>
+        </div>
+
+        <!-- URL Readability -->
+        <div class="adv-card">
+          <div class="adv-card-title">&#x1f517; URL c&#243; ngh&#297;a, d&#7877; share</div>
+          <div class="adv-card-desc">
+            REST URL c&#243; th&#7875; bookmark, share, gõ tr&#7921;c ti&#7871;p l&#234;n browser. GraphQL ch&#7881; c&#243; 1 endpoint POST &#8212; kh&#244;ng th&#7875; s&#7917; d&#7909;ng nh&#432; URL th&#244;ng th&#432;&#7901;ng.
+          </div>
+          <div class="url-section">
+            <div class="url-section-title">REST &#8212; URL r&#245; ngh&#297;a</div>
+            <div class="url-box"><span class="url-method get">GET</span><span class="url-text">/api/authors/1</span></div>
+            <div class="url-box"><span class="url-method get">GET</span><span class="url-text">/api/authors/1/posts</span></div>
+            <div class="url-box"><span class="url-method post">POST</span><span class="url-text">/api/authors/1/posts</span></div>
+          </div>
+          <div class="url-section url-section-gap">
+            <div class="url-section-title">GraphQL &#8212; m&#7885;i th&#7913; qua 1 endpoint</div>
+            <div class="url-box"><span class="url-method post">POST</span><span class="url-text">/graphql &#x1f4e6; (c&#7847;n body JSON)</span></div>
+            <div class="url-box"><span class="url-method post">POST</span><span class="url-text">/graphql &#x1f4e6; (c&#7847;n body JSON)</span></div>
+            <div class="url-box"><span class="url-method post">POST</span><span class="url-text">/graphql &#x1f4e6; (c&#7847;n body JSON)</span></div>
+          </div>
+          <div class="btn-row btn-row-gap">
+            <button class="btn-rest" onclick="window.open('/api/authors/1','_blank')">M&#7903; REST URL &#x2197;</button>
+            <button class="btn-rest" onclick="window.open('/api/authors/1/posts','_blank')">M&#7903; REST Posts &#x2197;</button>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
 </div>
 
 <script>
-  const QUERIES = {
-    onlyName: (id) => `query {\n  author(id: "${id}") {\n    name\n  }\n}`,
-    withPosts: (id) => `query {\n  author(id: "${id}") {\n    name\n    email\n    posts {\n      title\n      content\n    }\n  }\n}`,
-    minimalPost: (id) => `query {\n  author(id: "${id}") {\n    posts {\n      title\n    }\n  }\n}`,
-    full: (id) => `query {\n  author(id: "${id}") {\n    id\n    name\n    age\n    phone\n    email\n    posts {\n      id\n      title\n      content\n    }\n  }\n}`,
-    createPost: (id) => `mutation {\n  createPost(authorId: "${id}", title: "Bài viết từ GraphQL", content: "Nội dung bài viết") {\n    id\n    title\n  }\n}`,
+  var QUERIES = {
+    onlyName: function(id) { return 'query {\n  author(id: "' + id + '") {\n    name\n  }\n}'; },
+    withPosts: function(id) { return 'query {\n  author(id: "' + id + '") {\n    name\n    email\n    posts {\n      title\n      content\n    }\n  }\n}'; },
+    minimalPost: function(id) { return 'query {\n  author(id: "' + id + '") {\n    posts {\n      title\n    }\n  }\n}'; },
+    full: function(id) { return 'query {\n  author(id: "' + id + '") {\n    id\n    name\n    age\n    phone\n    email\n    posts {\n      id\n      title\n      content\n    }\n  }\n}'; },
+    createPost: function(id) { return 'mutation {\n  createPost(authorId: "' + id + '", title: "B\u00e0i vi\u1ebft t\u1eeb GraphQL", content: "N\u1ed9i dung b\u00e0i vi\u1ebft") {\n    id\n    title\n  }\n}'; }
   };
 
-  function setVal(id, val) {
-    document.getElementById(id).value = val;
-  }
+  function setVal(id, val) { document.getElementById(id).value = val; }
 
   function setQuery(key) {
-    const id = document.getElementById('gql-author-id').value || '1';
+    var id = document.getElementById('gql-author-id').value || '1';
     document.getElementById('gql-query').value = QUERIES[key](id);
   }
 
-  function showResponse(elId, data, isError = false) {
-    const el = document.getElementById(elId);
+  function showResponse(elId, data, isError) {
+    var el = document.getElementById(elId);
     el.classList.remove('empty', 'error');
     if (isError) el.classList.add('error');
     el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
   }
 
-  // ===== REST =====
-  async function restGetAuthor() {
-    const id = document.getElementById('rest-author-id').value.trim();
-    try {
-      const r = await fetch(`/api/authors/${encodeURIComponent(id)}`);
-      const data = await r.json();
-      showResponse('res-get-author', data, !r.ok);
-    } catch(e) { showResponse('res-get-author', 'Lỗi kết nối: ' + e.message, true); }
+  function byteSize(obj) { return new Blob([JSON.stringify(obj)]).size; }
+
+  function renderMetrics(elId, opts) {
+    var el = document.getElementById(elId);
+    var html = '';
+    if (opts.requests !== undefined) {
+      var cls = opts.requests > 1 ? 'warn' : 'good';
+      html += '<div class="metric">\u{1F310} Requests: <span class="metric-val ' + cls + '">' + opts.requests + '</span></div>';
+    }
+    if (opts.time !== undefined) {
+      var cls2 = opts.time > 100 ? 'warn' : 'good';
+      html += '<div class="metric">\u23F1 Th\u1eddi gian: <span class="metric-val ' + cls2 + '">' + opts.time + ' ms</span></div>';
+    }
+    if (opts.size !== undefined) {
+      html += '<div class="metric">\u{1F4E6} Payload: <span class="metric-val">' + opts.size + ' bytes</span></div>';
+    }
+    if (opts.wasteFields !== undefined) {
+      var cls3 = opts.wasteFields > 0 ? 'bad' : 'good';
+      var label = opts.wasteFields > 0 ? opts.wasteFields + ' field th\u1eeba' : '0 (t\u1ed1i \u01b0u)';
+      html += '<div class="metric">\u{1F5D1} D\u1eef li\u1ec7u th\u1eeba: <span class="metric-val ' + cls3 + '">' + label + '</span></div>';
+    }
+    el.innerHTML = html;
   }
 
-  async function restGetPosts() {
-    const id = document.getElementById('rest-posts-id').value.trim();
-    try {
-      const r = await fetch(`/api/authors/${encodeURIComponent(id)}/posts`);
-      const data = await r.json();
-      showResponse('res-get-posts', data, !r.ok);
-    } catch(e) { showResponse('res-get-posts', 'Lỗi kết nối: ' + e.message, true); }
-  }
-
-  async function restCreatePost() {
-    const id      = document.getElementById('rest-new-author-id').value.trim();
-    const title   = document.getElementById('rest-new-title').value.trim();
-    const content = document.getElementById('rest-new-content').value.trim();
-    try {
-      const r = await fetch(`/api/authors/${encodeURIComponent(id)}/posts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
+  function timedFetch(url, options) {
+    var t0 = performance.now();
+    return fetch(url, options).then(function(r) {
+      return r.json().then(function(data) {
+        var time = Math.round(performance.now() - t0);
+        return { data: data, time: time, ok: r.ok, size: byteSize(data) };
       });
-      const data = await r.json();
-      showResponse('res-create-post', data, !r.ok);
-    } catch(e) { showResponse('res-create-post', 'Lỗi kết nối: ' + e.message, true); }
+    });
   }
 
-  // ===== GraphQL =====
-  async function graphqlRequest(query, elId) {
-    try {
-      const r = await fetch('/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
-      });
-      const data = await r.json();
-      const hasError = data.errors && data.errors.length > 0;
-      showResponse(elId, data, hasError);
-    } catch(e) { showResponse(elId, 'Lỗi kết nối: ' + e.message, true); }
+  function restGetAuthor() {
+    var id = document.getElementById('rest-author-id').value.trim();
+    timedFetch('/api/authors/' + encodeURIComponent(id)).then(function(res) {
+      renderMetrics('metrics-get-author', { time: res.time, size: res.size, requests: 1 });
+      showResponse('res-get-author', res.data, !res.ok);
+    }).catch(function(e) { showResponse('res-get-author', 'L\u1ed7i k\u1ebft n\u1ed1i: ' + e.message, true); });
+  }
+
+  function restGetPosts() {
+    var id = document.getElementById('rest-posts-id').value.trim();
+    timedFetch('/api/authors/' + encodeURIComponent(id) + '/posts').then(function(res) {
+      renderMetrics('metrics-get-posts', { time: res.time, size: res.size, requests: 1 });
+      showResponse('res-get-posts', res.data, !res.ok);
+    }).catch(function(e) { showResponse('res-get-posts', 'L\u1ed7i k\u1ebft n\u1ed1i: ' + e.message, true); });
+  }
+
+  function restCreatePost() {
+    var id      = document.getElementById('rest-new-author-id').value.trim();
+    var title   = document.getElementById('rest-new-title').value.trim();
+    var content = document.getElementById('rest-new-content').value.trim();
+    timedFetch('/api/authors/' + encodeURIComponent(id) + '/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: title, content: content })
+    }).then(function(res) {
+      renderMetrics('metrics-create-post', { time: res.time, size: res.size, requests: 1 });
+      showResponse('res-create-post', res.data, !res.ok);
+    }).catch(function(e) { showResponse('res-create-post', 'L\u1ed7i k\u1ebft n\u1ed1i: ' + e.message, true); });
   }
 
   function runGraphQL() {
-    const query = document.getElementById('gql-query').value;
-    graphqlRequest(query, 'res-gql');
+    var query = document.getElementById('gql-query').value;
+    timedFetch('/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    }).then(function(res) {
+      var hasError = res.data.errors && res.data.errors.length > 0;
+      renderMetrics('metrics-gql', { time: res.time, size: res.size, requests: 1 });
+      showResponse('res-gql', res.data, hasError);
+    }).catch(function(e) { showResponse('res-gql', 'L\u1ed7i k\u1ebft n\u1ed1i: ' + e.message, true); });
   }
 
-  function openGraphiQL() {
-    window.open('/graphiql', '_blank');
+  function openGraphiQL() { window.open('/graphiql', '_blank'); }
+
+  function demoOverFetching() {
+    timedFetch('/api/authors/1').then(function(res) {
+      var data = res.data;
+      var neededFields = ['name'];
+      var allFields = Object.keys(data || {});
+      var wasteFields = allFields.filter(function(f) { return neededFields.indexOf(f) === -1; }).length;
+      renderMetrics('metrics-compare', { time: res.time, size: res.size, requests: 1, wasteFields: wasteFields });
+      var lines = [];
+      lines.push('// REST tr\u1ea3 v\u1ec1 TO\u00c0N B\u1ed8 d\u1eef li\u1ec7u d\u00f9 client ch\u1ec9 c\u1ea7n "name"');
+      lines.push('// C\u00e1c field g\u1ea1ch ngang = D\u1eee LI\u1ec6U TH\u1eEAA\n');
+      lines.push('{');
+      for (var i = 0; i < allFields.length; i++) {
+        var key = allFields[i];
+        var val = JSON.stringify(data[key]);
+        if (neededFields.indexOf(key) !== -1) {
+          lines.push('  "' + key + '": ' + val + '    \u2705 C\u1ea6N');
+        } else {
+          lines.push('  "' + key + '": ' + val + '    \u274c TH\u1eEAA');
+        }
+      }
+      lines.push('}');
+      showResponse('res-compare', lines.join('\n'));
+    }).catch(function(e) { showResponse('res-compare', 'L\u1ed7i: ' + e.message, true); });
   }
 
-  // ===== Demo so sánh =====
-  async function demoOverFetching() {
-    const id = '1';
-    try {
-      const r = await fetch(`/api/authors/${id}`);
-      const data = await r.json();
-      const note = `// REST trả về TOÀN BỘ dữ liệu dù client chỉ cần "name"\n// Đây là Over-fetching!\n\n`;
-      showResponse('res-compare', note + JSON.stringify(data, null, 2));
-    } catch(e) { showResponse('res-compare', 'Lỗi: ' + e.message, true); }
+  function demoGraphQLPrecise() {
+    var query = 'query { author(id: "1") { name } }';
+    timedFetch('/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    }).then(function(res) {
+      renderMetrics('metrics-compare', { time: res.time, size: res.size, requests: 1, wasteFields: 0 });
+      var note = '// GraphQL ch\u1ec9 tr\u1ea3 v\u1ec1 \u0111\u00fang field "name" m\u00e0 client y\u00eau c\u1ea7u\n// Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u th\u1eeba \u2014 0 waste!\n\n';
+      showResponse('res-compare', note + JSON.stringify(res.data, null, 2));
+    }).catch(function(e) { showResponse('res-compare', 'L\u1ed7i: ' + e.message, true); });
   }
 
-  async function demoGraphQLPrecise() {
-    const query = `query { author(id: "1") { name } }`;
-    try {
-      const r = await fetch('/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+  /* RACE */
+  function startRace() {
+    var btn = document.getElementById('btn-start-race');
+    btn.disabled = true;
+    btn.textContent = '\u0110ang ch\u1ea1y...';
+    btn.classList.add('loading');
+
+    var barIds = ['race-rest-bar1','race-rest-bar2','race-rest-total-bar','race-gql-bar1','race-gql-total-bar'];
+    for (var i = 0; i < barIds.length; i++) {
+      document.getElementById(barIds[i]).style.width = '0';
+      document.getElementById(barIds[i]).textContent = '';
+    }
+    var timeIds = ['race-rest-t1','race-rest-t2','race-rest-total','race-gql-t1','race-gql-total'];
+    for (var j = 0; j < timeIds.length; j++) {
+      document.getElementById(timeIds[j]).textContent = '...';
+    }
+    document.getElementById('race-rest-response').textContent = '';
+    document.getElementById('race-gql-response').textContent = '';
+    document.getElementById('winner-banner').classList.remove('show');
+    var scoreIds = ['score-rest-reqs','score-rest-time','score-rest-size','score-rest-waste','score-gql-reqs','score-gql-time','score-gql-size','score-gql-waste'];
+    for (var k = 0; k < scoreIds.length; k++) {
+      document.getElementById(scoreIds[k]).textContent = '...';
+    }
+
+    setTimeout(function() {
+      // cache:'reload' = luôn fetch từ network (bỏ qua cache cũ), sau đó lưu vào cache cho Lần 2
+      var restTotalStart = performance.now();
+      timedFetch('/api/authors/1', { cache: 'reload' }).then(function(r1) {
+        document.getElementById('race-rest-t1').textContent = r1.time + ' ms';
+        return timedFetch('/api/authors/1/posts', { cache: 'reload' }).then(function(r2) {
+          document.getElementById('race-rest-t2').textContent = r2.time + ' ms';
+          var restTotalTime = Math.round(performance.now() - restTotalStart);
+          document.getElementById('race-rest-total').textContent = restTotalTime + ' ms';
+          return { r1: r1, r2: r2, totalTime: restTotalTime, totalSize: r1.size + r2.size };
+        });
+      }).then(function(rest) {
+        var gqlQuery = 'query { author(id: "1") { name posts { title } } }';
+        return timedFetch('/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: gqlQuery })
+        }).then(function(gql) {
+          document.getElementById('race-gql-t1').textContent = gql.time + ' ms';
+          document.getElementById('race-gql-total').textContent = gql.time + ' ms';
+          return { rest: rest, gql: gql };
+        });
+      }).then(function(results) {
+        var rest = results.rest;
+        var gql = results.gql;
+        var maxTime = Math.max(rest.totalTime, gql.time, 1);
+
+        setTimeout(function() {
+          var pct = function(t) { return Math.max((t / maxTime) * 100, 15) + '%'; };
+          var b1 = document.getElementById('race-rest-bar1');
+          b1.style.width = pct(rest.r1.time);
+          b1.textContent = rest.r1.time + 'ms';
+
+          var b2 = document.getElementById('race-rest-bar2');
+          b2.style.width = pct(rest.r2.time);
+          b2.textContent = rest.r2.time + 'ms';
+
+          var bt = document.getElementById('race-rest-total-bar');
+          bt.style.width = pct(rest.totalTime);
+          bt.textContent = rest.totalTime + 'ms';
+
+          var gb = document.getElementById('race-gql-bar1');
+          gb.style.width = pct(gql.time);
+          gb.textContent = gql.time + 'ms';
+
+          var gt = document.getElementById('race-gql-total-bar');
+          gt.style.width = pct(gql.time);
+          gt.textContent = gql.time + 'ms';
+
+          // REST response with highlight
+          var authorData = rest.r1.data || {};
+          var postsData = rest.r2.data || [];
+          var neededA = ['name'];
+          var neededP = ['title'];
+          var restLines = [];
+          restLines.push('// Request 1: GET /api/authors/1');
+          restLines.push('{');
+          var aKeys = Object.keys(authorData);
+          for (var m = 0; m < aKeys.length; m++) {
+            var ak = aKeys[m];
+            var av = JSON.stringify(authorData[ak]);
+            restLines.push('  "' + ak + '": ' + av + (neededA.indexOf(ak) !== -1 ? '  \u2705' : '  \u274c th\u1eeba'));
+          }
+          restLines.push('}\n');
+          restLines.push('// Request 2: GET /api/authors/1/posts');
+          restLines.push('[');
+          for (var n = 0; n < postsData.length; n++) {
+            restLines.push('  {');
+            var pKeys = Object.keys(postsData[n]);
+            for (var p = 0; p < pKeys.length; p++) {
+              var pk = pKeys[p];
+              var pv = JSON.stringify(postsData[n][pk]);
+              restLines.push('    "' + pk + '": ' + pv + (neededP.indexOf(pk) !== -1 ? '  \u2705' : '  \u274c th\u1eeba'));
+            }
+            restLines.push('  },');
+          }
+          restLines.push(']');
+          document.getElementById('race-rest-response').textContent = restLines.join('\n');
+
+          // GQL response
+          var gqlLines = [];
+          gqlLines.push('// 1 Request duy nh\u1ea5t: POST /graphql');
+          gqlLines.push('// Ch\u1ec9 tr\u1ea3 v\u1ec1 { name, posts[].title } \u2014 kh\u00f4ng th\u1eeba!\n');
+          gqlLines.push(JSON.stringify(gql.data, null, 2));
+          document.getElementById('race-gql-response').textContent = gqlLines.join('\n');
+
+          // Waste count
+          var wasteA = aKeys.filter(function(x) { return neededA.indexOf(x) === -1; }).length;
+          var wasteP = postsData.length > 0 ? Object.keys(postsData[0]).filter(function(x) { return neededP.indexOf(x) === -1; }).length : 0;
+          var totalWaste = wasteA + wasteP;
+
+          // Scoreboard
+          document.getElementById('score-rest-reqs').textContent = '2';
+          document.getElementById('score-rest-time').textContent = rest.totalTime + ' ms';
+          document.getElementById('score-rest-size').textContent = rest.totalSize + ' bytes';
+          document.getElementById('score-rest-waste').textContent = totalWaste + ' fields th\u1eeba';
+
+          document.getElementById('score-gql-reqs').textContent = '1';
+          document.getElementById('score-gql-time').textContent = gql.time + ' ms';
+          document.getElementById('score-gql-size').textContent = gql.size + ' bytes';
+          document.getElementById('score-gql-waste').textContent = '0 (t\u1ed1i \u01b0u)';
+
+          // Winner
+          var banner = document.getElementById('winner-banner');
+          var savedBytes = rest.totalSize - gql.size;
+          var savedPct = rest.totalSize > 0 ? Math.round((savedBytes / rest.totalSize) * 100) : 0;
+          banner.innerHTML = '\u{1F3C6} GraphQL th\u1eafng! Ti\u1ebft ki\u1ec7m <strong>' + savedPct + '%</strong> payload (' + savedBytes + ' bytes), ch\u1ec9 <strong>1 request</strong> thay v\u00ec 2, kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u th\u1eeba.';
+          setTimeout(function() { banner.classList.add('show'); }, 400);
+
+          btn.disabled = false;
+          btn.textContent = '\u{1F680} L\u1ea7n 1 \u2014 Kh\u00f4ng cache';
+          btn.classList.remove('loading');
+          document.getElementById('race-round-note').textContent = '\u2705 L\u1ea7n 1 xong! Cache REST đ\u00e3 s\u1eb5n s\u00e0ng. B\u00e2y gi\u1edd h\u00e3y ch\u1ea1y L\u1ea7n 2 \u21d2';
+          document.getElementById('race-rest-col-title').innerHTML = '<span class="badge badge-rest">REST</span> C\u1ea7n 2 Request tu\u1ea7n t\u1ef1';
+          document.getElementById('race-gql-col-title').innerHTML = '<span class="badge badge-gql">GraphQL</span> Ch\u1ec9 1 Request duy nh\u1ea5t';
+        }, 100);
       });
-      const data = await r.json();
-      const note = `// GraphQL chỉ trả về đúng field "name" mà client yêu cầu\n// Không có dữ liệu thừa!\n\n`;
-      showResponse('res-compare', note + JSON.stringify(data, null, 2));
-    } catch(e) { showResponse('res-compare', 'Lỗi: ' + e.message, true); }
+    }, 300);
   }
 
-  // Sync author ID vào query khi thay đổi
+  /* Clear cache để chạy demo lại từ đầu */
+  function clearRaceCache() {
+    Promise.all([
+      fetch('/api/authors/1', { cache: 'no-store' }),
+      fetch('/api/authors/1/posts', { cache: 'no-store' })
+    ]).then(function() {
+      var barIds = ['race-rest-bar1','race-rest-bar2','race-rest-total-bar','race-gql-bar1','race-gql-total-bar'];
+      for (var i = 0; i < barIds.length; i++) { document.getElementById(barIds[i]).style.width = '0'; document.getElementById(barIds[i]).textContent = ''; }
+      var timeIds = ['race-rest-t1','race-rest-t2','race-rest-total','race-gql-t1','race-gql-total'];
+      for (var j = 0; j < timeIds.length; j++) { document.getElementById(timeIds[j]).textContent = '\u2014'; }
+      document.getElementById('race-rest-response').textContent = '';
+      document.getElementById('race-gql-response').textContent = '';
+      var banner = document.getElementById('winner-banner');
+      banner.classList.remove('show', 'rest-win');
+      var scoreIds = ['score-rest-reqs','score-rest-time','score-rest-size','score-rest-waste','score-gql-reqs','score-gql-time','score-gql-size','score-gql-waste'];
+      for (var k = 0; k < scoreIds.length; k++) { document.getElementById(scoreIds[k]).textContent = '\u2014'; }
+      document.getElementById('race-rest-col-title').innerHTML = '<span class="badge badge-rest">REST</span> C\u1ea7n 2 Request tu\u1ea7n t\u1ef1';
+      document.getElementById('race-gql-col-title').innerHTML = '<span class="badge badge-gql">GraphQL</span> Ch\u1ec9 1 Request duy nh\u1ea5t';
+      document.getElementById('race-round-note').textContent = '\u{1F5D1} Cache \u0111\u00e3 x\u00f3a! S\u1eb5n s\u00e0ng ch\u1ea1y l\u1ea1i t\u1eeb L\u1ea7n 1.';
+    });
+  }
+
+  /* RACE ROUND 2 — với browser cache */
+  function startRace2() {
+    var btn = document.getElementById('btn-start-race2');
+    btn.disabled = true;
+    btn.textContent = '\u0110ang ch\u1ea1y...';
+    btn.classList.add('loading');
+
+    var barIds = ['race-rest-bar1','race-rest-bar2','race-rest-total-bar','race-gql-bar1','race-gql-total-bar'];
+    for (var i = 0; i < barIds.length; i++) {
+      document.getElementById(barIds[i]).style.width = '0';
+      document.getElementById(barIds[i]).textContent = '';
+    }
+    var timeIds = ['race-rest-t1','race-rest-t2','race-rest-total','race-gql-t1','race-gql-total'];
+    for (var j = 0; j < timeIds.length; j++) { document.getElementById(timeIds[j]).textContent = '...'; }
+    document.getElementById('race-rest-response').textContent = '';
+    document.getElementById('race-gql-response').textContent = '';
+    var banner = document.getElementById('winner-banner');
+    banner.classList.remove('show', 'rest-win');
+    var scoreIds = ['score-rest-reqs','score-rest-time','score-rest-size','score-rest-waste','score-gql-reqs','score-gql-time','score-gql-size','score-gql-waste'];
+    for (var k = 0; k < scoreIds.length; k++) { document.getElementById(scoreIds[k]).textContent = '...'; }
+
+    document.getElementById('race-rest-col-title').innerHTML = '<span class="badge badge-rest">REST</span> \u26A1 L\u1ea7n 2 \u2014 T\u1eeb Cache!';
+    document.getElementById('race-gql-col-title').innerHTML = '<span class="badge badge-gql">GraphQL</span> V\u1eabn ph\u1ea3i POST m\u1edbi';
+    document.getElementById('race-round-note').textContent = '\u23F3 L\u1ea7n 2 \u0111ang ch\u1ea1y...';
+
+    setTimeout(function() {
+      // REST dùng browser cache (Cache-Control: max-age=30 từ lần 1)
+      var restTotalStart = performance.now();
+      timedFetch('/api/authors/1').then(function(r1) {
+        document.getElementById('race-rest-t1').textContent = r1.time + ' ms';
+        return timedFetch('/api/authors/1/posts').then(function(r2) {
+          document.getElementById('race-rest-t2').textContent = r2.time + ' ms';
+          var restTotalTime = Math.round(performance.now() - restTotalStart);
+          document.getElementById('race-rest-total').textContent = restTotalTime + ' ms';
+          return { r1: r1, r2: r2, totalTime: restTotalTime, totalSize: r1.size + r2.size };
+        });
+      }).then(function(rest) {
+        var gqlQuery = 'query { author(id: "1") { name posts { title } } }';
+        return timedFetch('/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: gqlQuery })
+        }).then(function(gql) {
+          document.getElementById('race-gql-t1').textContent = gql.time + ' ms';
+          document.getElementById('race-gql-total').textContent = gql.time + ' ms';
+          return { rest: rest, gql: gql };
+        });
+      }).then(function(results) {
+        var rest = results.rest;
+        var gql = results.gql;
+        var maxTime = Math.max(rest.totalTime, gql.time, 1);
+
+        setTimeout(function() {
+          var pct = function(t) { return Math.max((t / maxTime) * 100, 8) + '%'; };
+
+          var b1 = document.getElementById('race-rest-bar1');
+          b1.style.width = pct(rest.r1.time); b1.textContent = rest.r1.time + 'ms';
+          var b2 = document.getElementById('race-rest-bar2');
+          b2.style.width = pct(rest.r2.time); b2.textContent = rest.r2.time + 'ms';
+          var bt = document.getElementById('race-rest-total-bar');
+          bt.style.width = pct(rest.totalTime); bt.textContent = rest.totalTime + 'ms';
+          var gb = document.getElementById('race-gql-bar1');
+          gb.style.width = pct(gql.time); gb.textContent = gql.time + 'ms';
+          var gt = document.getElementById('race-gql-total-bar');
+          gt.style.width = pct(gql.time); gt.textContent = gql.time + 'ms';
+
+          var restLines = [];
+          restLines.push('// Request 1: GET /api/authors/1  \u26A1 T\u1EEB CACHE');
+          restLines.push('// Cache-Control: max-age=30 \u2192 browser kh\u00f4ng g\u1EED network!');
+          restLines.push('// ' + rest.r1.time + ' ms (so s\u00e1nh l\u1EA7n 1: server round-trip)');
+          restLines.push('');
+          restLines.push('// Request 2: GET .../posts  \u26A1 T\u1EEB CACHE');
+          restLines.push('// ' + rest.r2.time + ' ms\n');
+          restLines.push(JSON.stringify(rest.r1.data, null, 2));
+          document.getElementById('race-rest-response').textContent = restLines.join('\n');
+
+          var gqlLines = [];
+          gqlLines.push('// POST /graphql \u2014 POST kh\u00f4ng cache \u0111\u01B0\u1EE3c');
+          gqlLines.push('// V\u1EABn ph\u1EA3i g\u1EED request m\u1EDBi t\u1EDBi server: ' + gql.time + ' ms\n');
+          gqlLines.push(JSON.stringify(gql.data, null, 2));
+          document.getElementById('race-gql-response').textContent = gqlLines.join('\n');
+
+          document.getElementById('score-rest-reqs').textContent = '2 (t\u1EEB cache)';
+          document.getElementById('score-rest-time').textContent = rest.totalTime + ' ms';
+          document.getElementById('score-rest-size').textContent = rest.totalSize + ' bytes';
+          document.getElementById('score-rest-waste').textContent = '\u26A1 t\u1EEB cache!';
+
+          document.getElementById('score-gql-reqs').textContent = '1 (network)';
+          document.getElementById('score-gql-time').textContent = gql.time + ' ms';
+          document.getElementById('score-gql-size').textContent = gql.size + ' bytes';
+          document.getElementById('score-gql-waste').textContent = '0 (t\u1ED1i \u01B0u)';
+
+          banner.classList.add('rest-win');
+          var faster = gql.time - rest.totalTime;
+          if (faster > 0) {
+            banner.innerHTML = '\u26A1 REST th\u1EAFng L\u1EA7n 2! Cache gi\u00FAp REST nhanh h\u01A1n <strong>' + faster + ' ms</strong> \u2014 kh\u00F4ng c\u1EA7n g\u1EED request l\u00EAn server!';
+          } else {
+            banner.innerHTML = '\u26A1 L\u1EA7n 2: REST <strong>' + rest.totalTime + ' ms</strong> vs GraphQL <strong>' + gql.time + ' ms</strong> \u2014 Cache gi\u00FAp REST nhanh h\u01A1n r\u1EA5t nhi\u1EC1u so v\u1EDBi L\u1EA7n 1!';
+          }
+          setTimeout(function() { banner.classList.add('show'); }, 400);
+
+          document.getElementById('race-round-note').textContent = '\u2705 L\u1EA7n 2 xong! L\u1EA7n 2 REST nhanh h\u01A1n nh\u1EDD HTTP Cache.';
+          btn.disabled = false;
+          btn.textContent = '\u26A1 L\u1EA7n 2 \u2014 REST c\u00F3 cache';
+          btn.classList.remove('loading');
+        }, 100);
+      });
+    }, 300);
+  }
+
   document.getElementById('gql-author-id').addEventListener('input', function() {
-    const current = document.getElementById('gql-query').value;
-    const newId = this.value;
-    document.getElementById('gql-query').value = current.replace(/"[^"]*"/g, `"${newId}"`);
+    var current = document.getElementById('gql-query').value;
+    var newId = this.value;
+    document.getElementById('gql-query').value = current.replace(/id:\s*"[^"]*"/g, 'id: "' + newId + '"');
   });
+
+  /* ====== REST ADVANTAGES ====== */
+
+  function demoStatus200() {
+    var t0 = performance.now();
+    fetch('/api/authors/1').then(function(r) {
+      var time = Math.round(performance.now() - t0);
+      document.getElementById('sc-rest-code').textContent = r.status;
+      document.getElementById('sc-rest-code').className = 'status-code ok';
+      return r.json().then(function(data) {
+        var box = document.getElementById('res-status-compare');
+        box.className = 'adv-response-box ok';
+        box.textContent = '// REST: GET /api/authors/1 \u2192 HTTP ' + r.status + ' OK (' + time + ' ms)\n// Status r\u00f5 r\u00e0ng: t\u00ecm th\u1ea5y \u2192 200\n\n' + JSON.stringify(data, null, 2);
+      });
+    });
+  }
+
+  function demoStatus404() {
+    fetch('/api/authors/99').then(function(r) {
+      document.getElementById('sc-rest-code').textContent = r.status;
+      document.getElementById('sc-rest-code').className = 'status-code err';
+      var box = document.getElementById('res-status-compare');
+      box.className = 'adv-response-box error';
+      box.textContent = '// REST: GET /api/authors/99 \u2192 HTTP ' + r.status + ' Not Found\n// Client bi\u1ebft ngay kh\u00f4ng t\u00ecm th\u1ea5y qua HTTP status!\n// Kh\u00f4ng c\u1ea7n parse body \u2014 middleware/browser hi\u1ec3u ngay.';
+    });
+  }
+
+  function demoGqlMissing() {
+    var query = 'query { author(id: "99") { name } }';
+    fetch('/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    }).then(function(r) {
+      document.getElementById('sc-gql-code').textContent = r.status;
+      document.getElementById('sc-gql-code').className = 'status-code gql-ok';
+      return r.json().then(function(data) {
+        var box = document.getElementById('res-status-compare');
+        box.className = 'adv-response-box warn';
+        box.textContent = '// GraphQL: POST /graphql \u2192 HTTP ' + r.status + ' OK (lu\u00f4n lu\u00f4n!)\n// D\u00f9 author id=99 kh\u00f4ng t\u1ed3n t\u1ea1i, status v\u1eabn l\u00e0 200!\n// L\u1ed7i \u1ea9n trong JSON body \u2014 client ph\u1ea3i t\u1ef1 ki\u1ec3m tra.\n\n' + JSON.stringify(data, null, 2);
+      });
+    });
+  }
+
+  var _cacheTime1 = 0;
+
+  function demoCaching() {
+    var barEl1 = document.getElementById('cache-bar-1');
+    var barEl2 = document.getElementById('cache-bar-2');
+    var barGql = document.getElementById('cache-bar-gql');
+    barEl1.style.width = '0'; barEl1.textContent = '';
+    barEl2.style.width = '0'; barEl2.textContent = '';
+    barGql.style.width  = '0'; barGql.textContent = '';
+
+    var box = document.getElementById('res-cache');
+    box.className = 'adv-response-box';
+    box.textContent = '\u0110ang \u0111o...';
+
+    var t1 = performance.now();
+    fetch('/api/authors/1', { cache: 'no-store' }).then(function(r) {
+      _cacheTime1 = Math.round(performance.now() - t1);
+
+      return fetch('/api/authors/1').then(function() {
+        var t2 = performance.now();
+        return fetch('/api/authors/1').then(function(r2) {
+          var time2 = Math.round(performance.now() - t2);
+          var gqlQuery = 'query { author(id: "1") { name } }';
+          var t3 = performance.now();
+          return fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: gqlQuery })
+          }).then(function() {
+            var timeGql = Math.round(performance.now() - t3);
+            var maxTime = Math.max(_cacheTime1, time2, timeGql, 1);
+            var pct = function(t) { return Math.max((t / maxTime) * 100, 10) + '%'; };
+
+            setTimeout(function() {
+              barEl1.style.width = pct(_cacheTime1);
+              barEl1.textContent = _cacheTime1 + ' ms';
+              barEl2.style.width = pct(time2);
+              barEl2.textContent = time2 + ' ms';
+              barGql.style.width  = pct(timeGql);
+              barGql.textContent  = timeGql + ' ms';
+
+              var lines = [];
+              lines.push('// REST L\u1ea7n 1 (fresh): ' + _cacheTime1 + ' ms');
+              lines.push('// REST L\u1ea7n 2 (cache): ' + time2 + ' ms  \u27a1 nhanh h\u01a1n ' + Math.round((_cacheTime1 - time2)) + ' ms');
+              lines.push('// GraphQL (POST, kh\u00f4ng cache): ' + timeGql + ' ms');
+              lines.push('');
+              lines.push('// Header REST tr\u1ea3 v\u1ec1: Cache-Control: max-age=30, public');
+              lines.push('// Header GraphQL: kh\u00f4ng c\u00f3 (POST kh\u00f4ng \u0111\u01b0\u1ee3c cache)');
+              lines.push('');
+              lines.push('// \u1ee2ng d\u1ee5ng th\u1ef1c t\u1ebf: CDN c\u00f3 th\u1ec3 cache REST GET giúp');
+              lines.push('// gi\u1ea3m t\u1ea3i server r\u1ea5t nhi\u1ec1u. GraphQL kh\u00f4ng c\u00f3 l\u1ee3i th\u1ebf n\u00e0y.');
+              box.textContent = lines.join('\n');
+            }, 100);
+          });
+        });
+      });
+    }).catch(function(e) { box.textContent = 'L\u1ed7i: ' + e.message; });
+  }
 </script>
 
 </body>
