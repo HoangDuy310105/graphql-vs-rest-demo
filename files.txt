@@ -1,7 +1,0 @@
-﻿M	README.md
-M	src/main/java/com/example/demo/AuthorGraphqlController.java
-M	src/main/java/com/example/demo/AuthorRestController.java
-M	src/main/java/com/example/demo/DataStore.java
-A	src/main/java/com/example/demo/PostRequestBody.java
-M	src/main/resources/graphql/schema.graphqls
-A	src/main/resources/static/index.html
